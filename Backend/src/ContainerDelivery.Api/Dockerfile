@@ -10,7 +10,7 @@ COPY ["src/ContainerDelivery.Infrastructure/ContainerDelivery.Infrastructure.csp
 COPY ["src/ContainerDelivery.Api/ContainerDelivery.Api.csproj", "src/ContainerDelivery.Api/"]
 
 # Restore dependencies
-RUN dotnet restore "ContainerDelivery.sln"
+RUN dotnet restore "src/ContainerDelivery.Api/ContainerDelivery.Api.csproj"
 
 # Copy source code
 COPY . .
