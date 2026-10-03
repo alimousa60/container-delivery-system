@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ContainerDelivery.Core.Enums;
+using UserRoleEnum = ContainerDelivery.Core.Enums.UserRole;
 
 namespace ContainerDelivery.Core.Entities;
 
@@ -10,7 +10,7 @@ public class UserRole : BaseEntity
     public int UserId { get; set; }
 
     [Required]
-    public UserRole Role { get; set; }
+    public UserRoleEnum Role { get; set; }
 
     [Required]
     public int AssignedByUserId { get; set; }

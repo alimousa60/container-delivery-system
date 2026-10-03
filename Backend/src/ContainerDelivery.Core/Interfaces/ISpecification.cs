@@ -18,7 +18,7 @@ public interface ISpecification<T> where T : BaseEntity
 
 public abstract class BaseSpecification<T> : ISpecification<T> where T : BaseEntity
 {
-    public Expression<Func<T, bool>>? Criteria { get; private set; }
+    public Expression<Func<T, bool>>? Criteria { get; protected set; }
     public List<Expression<Func<T, object>>> Includes { get; } = new();
     public List<string> IncludeStrings { get; } = new();
     public Expression<Func<T, object>>? OrderBy { get; private set; }

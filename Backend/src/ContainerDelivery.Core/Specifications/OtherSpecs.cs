@@ -28,7 +28,7 @@ public class DeliveryRecordsByContainerSpec : BaseSpecification<DeliveryRecord>
         Criteria = dr => dr.ContainerId == containerId;
         AddInclude(dr => dr.Vehicle);
         AddInclude(dr => dr.DeliveredByUser);
-        ApplyOrderByDescending(dr => dr.DeliveredAt);
+        ApplyOrderByDescending(dr => dr.CreatedAt);
     }
 }
 
@@ -38,7 +38,7 @@ public class DeliveryRecordsByVehicleSpec : BaseSpecification<DeliveryRecord>
     {
         Criteria = dr => dr.VehicleId == vehicleId;
         AddInclude(dr => dr.DeliveredByUser);
-        ApplyOrderByDescending(dr => dr.DeliveredAt);
+        ApplyOrderByDescending(dr => dr.CreatedAt);
     }
 }
 
@@ -74,16 +74,16 @@ public class AuditLogsPagedSpec : BaseSpecification<AuditLog>
         if (fromDate.HasValue)
         {
             var dateCriteria = Criteria;
-            Criteria = a => dateCriteria(a) && a.Timestamp >= fromDate.Value;
+            Criteria = a => dateCriteria(a) && a.CreatedAt >= fromDate.Value;
         }
 
         if (toDate.HasValue)
         {
             var dateCriteria = Criteria;
-            Criteria = a => dateCriteria(a) && a.Timestamp <= toDate.Value;
+            Criteria = a => dateCriteria(a) && a.CreatedAt <= toDate.Value;
         }
 
-        ApplyOrderByDescending(a => a.Timestamp);
+        ApplyOrderByDescending(a => a.CreatedAt);
         ApplyPaging((page - 1) * pageSize, pageSize);
         AddInclude(a => a.User);
     }
@@ -121,13 +121,13 @@ public class AuditLogsCountSpec : BaseSpecification<AuditLog>
         if (fromDate.HasValue)
         {
             var dateCriteria = Criteria;
-            Criteria = a => dateCriteria(a) && a.Timestamp >= fromDate.Value;
+            Criteria = a => dateCriteria(a) && a.CreatedAt >= fromDate.Value;
         }
 
         if (toDate.HasValue)
         {
             var dateCriteria = Criteria;
-            Criteria = a => dateCriteria(a) && a.Timestamp <= toDate.Value;
+            Criteria = a => dateCriteria(a) && a.CreatedAt <= toDate.Value;
         }
     }
 }
@@ -140,16 +140,16 @@ public class AuditLogsExportSpec : BaseSpecification<AuditLog>
 
         if (fromDate.HasValue)
         {
-            Criteria = a => a.Timestamp >= fromDate.Value;
+            Criteria = a => a.CreatedAt >= fromDate.Value;
         }
 
         if (toDate.HasValue)
         {
             var dateCriteria = Criteria;
-            Criteria = a => dateCriteria(a) && a.Timestamp <= toDate.Value;
+            Criteria = a => dateCriteria(a) && a.CreatedAt <= toDate.Value;
         }
 
-        ApplyOrderByDescending(a => a.Timestamp);
+        ApplyOrderByDescending(a => a.CreatedAt);
         AddInclude(a => a.User);
     }
 }
@@ -159,7 +159,7 @@ public class ContainerReportsByContainerSpec : BaseSpecification<ContainerReport
     public ContainerReportsByContainerSpec(int containerId)
     {
         Criteria = r => r.ContainerId == containerId;
-        ApplyOrderByDescending(r => r.GeneratedAt);
+        ApplyOrderByDescending(r => r.CreatedAt);
         AddInclude(r => r.GeneratedByUser);
     }
 }
@@ -178,7 +178,7 @@ public class ImportBatchesPagedSpec : BaseSpecification<ImportBatch>
 {
     public ImportBatchesPagedSpec(int page, int pageSize)
     {
-        ApplyOrderByDescending(i => i.ImportedAt);
+        ApplyOrderByDescending(i => i.CreatedAt);
         ApplyPaging((page - 1) * pageSize, pageSize);
         AddInclude(i => i.ImportedByUser);
     }

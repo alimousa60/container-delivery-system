@@ -24,12 +24,19 @@ public class Container : BaseEntity
 
     public DateTime? CompletedAt { get; set; }
 
+    public DateTime? ClosedAt { get; set; }
+
+    public int? ClosedByUserId { get; set; }
+
     [MaxLength(2000)]
     public string? Notes { get; set; }
 
     // Navigation properties
     [ForeignKey(nameof(CreatedByUserId))]
     public virtual User CreatedByUser { get; set; } = null!;
+
+    [ForeignKey(nameof(ClosedByUserId))]
+    public virtual User? ClosedByUser { get; set; }
 
     public virtual ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
 
