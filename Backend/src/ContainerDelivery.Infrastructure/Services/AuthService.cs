@@ -6,6 +6,7 @@ using ContainerDelivery.Core.Interfaces;
 using ContainerDelivery.Core.Specifications;
 using ContainerDelivery.Infrastructure.Auth;
 using System.Security.Cryptography;
+using UserRole = ContainerDelivery.Core.Entities.UserRole;
 
 namespace ContainerDelivery.Infrastructure.Services;
 

@@ -5,6 +5,8 @@ using ContainerDelivery.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using UserRole = ContainerDelivery.Core.Enums.UserRole;
+using UserRoleEntity = ContainerDelivery.Core.Entities.UserRole;
 
 namespace ContainerDelivery.Api.Extensions;
 
@@ -64,7 +66,7 @@ public static class SeedData
             var adminRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == UserRole.Admin);
             if (adminRole != null)
             {
-                var userRole = new UserRole
+                var userRole = new UserRoleEntity
                 {
                     UserId = adminUser.Id,
                     Role = UserRole.Admin,
@@ -90,7 +92,7 @@ public static class SeedData
             var deliveryRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == UserRole.DeliveryUser);
             if (deliveryRole != null)
             {
-                var userRole = new UserRole
+                var userRole = new UserRoleEntity
                 {
                     UserId = deliveryUser.Id,
                     Role = UserRole.DeliveryUser,

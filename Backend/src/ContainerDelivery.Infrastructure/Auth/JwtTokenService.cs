@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using ContainerDelivery.Core.Entities;
 using ContainerDelivery.Core.Enums;
+using UserRole = ContainerDelivery.Core.Enums.UserRole;
 
 namespace ContainerDelivery.Infrastructure.Auth;
 

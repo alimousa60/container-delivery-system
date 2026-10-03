@@ -49,13 +49,13 @@ public class User : BaseEntity
 
     // Helper properties
     [NotMapped]
-    public IEnumerable<UserRole> Roles => UserRoles.Select(ur => ur.Role);
+    public IEnumerable<ContainerDelivery.Core.Enums.UserRole> Roles => UserRoles.Select(ur => ur.Role);
 
     [NotMapped]
-    public bool IsAdmin => UserRoles.Any(ur => ur.Role == UserRole.Admin);
+    public bool IsAdmin => UserRoles.Any(ur => ur.Role == ContainerDelivery.Core.Enums.UserRole.Admin);
 
     [NotMapped]
-    public bool IsDeliveryUser => UserRoles.Any(ur => ur.Role == UserRole.DeliveryUser);
+    public bool IsDeliveryUser => UserRoles.Any(ur => ur.Role == ContainerDelivery.Core.Enums.UserRole.DeliveryUser);
 
     public void RecordSuccessfulLogin()
     {

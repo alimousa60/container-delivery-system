@@ -1,6 +1,7 @@
 using ContainerDelivery.Core.Entities;
 using ContainerDelivery.Core.Enums;
 using ContainerDelivery.Core.Interfaces;
+using UserRole = ContainerDelivery.Core.Enums.UserRole;
 
 namespace ContainerDelivery.Core.Specifications;
 

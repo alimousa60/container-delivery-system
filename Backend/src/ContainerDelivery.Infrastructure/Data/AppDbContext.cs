@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using ContainerDelivery.Core.Entities;
 using ContainerDelivery.Core.Enums;
+using UserRole = ContainerDelivery.Core.Entities.UserRole;
+using UserRoleEnum = ContainerDelivery.Core.Enums.UserRole;
 
 namespace ContainerDelivery.Infrastructure.Data;
 
@@ -26,8 +28,8 @@ public class AppDbContext : DbContext
         
         // Seed Roles
         modelBuilder.Entity<Role>().HasData(
-            new Role { Id = 1, Name = "Admin", Description = "Full system access" },
-            new Role { Id = 2, Name = "DeliveryUser", Description = "Can view assigned containers, confirm deliveries, and generate reports" }
+            new Role { Id = 1, Name = UserRoleEnum.Admin, Description = "Full system access" },
+            new Role { Id = 2, Name = UserRoleEnum.DeliveryUser, Description = "Can view assigned containers, confirm deliveries, and generate reports" }
         );
     }
 

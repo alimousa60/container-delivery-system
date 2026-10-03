@@ -1,6 +1,7 @@
 using ContainerDelivery.Core.Entities;
 using ContainerDelivery.Core.Enums;
 using ContainerDelivery.Core.Interfaces;
+using UserRole = ContainerDelivery.Core.Entities.UserRole;
 
 namespace ContainerDelivery.Core.Specifications;
 
@@ -202,7 +203,7 @@ public class UserRolesByUserSpec : BaseSpecification<UserRole>
 
 public class UserRoleByIdSpec : BaseSpecification<UserRole>
 {
-    public UserRoleByIdSpec(int userId, UserRole role)
+    public UserRoleByIdSpec(int userId, ContainerDelivery.Core.Enums.UserRole role)
     {
         Criteria = ur => ur.UserId == userId && ur.Role == role;
     }
