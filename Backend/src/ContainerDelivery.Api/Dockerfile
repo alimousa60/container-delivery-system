@@ -4,6 +4,7 @@ WORKDIR /src
 
 # Copy solution and project files
 COPY ["ContainerDelivery.sln", "./"]
+COPY ["Directory.Build.props", "./"]
 COPY ["src/ContainerDelivery.Core/ContainerDelivery.Core.csproj", "src/ContainerDelivery.Core/"]
 COPY ["src/ContainerDelivery.Application/ContainerDelivery.Application.csproj", "src/ContainerDelivery.Application/"]
 COPY ["src/ContainerDelivery.Infrastructure/ContainerDelivery.Infrastructure.csproj", "src/ContainerDelivery.Infrastructure/"]
