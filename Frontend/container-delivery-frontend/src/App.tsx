@@ -1,0 +1,103 @@
+import React, { Suspense, lazy } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import { useTheme } from './context/ThemeContext';
+import { Layout } from './components/layout/Layout';
+import { LoadingSpinner } from './components/ui/LoadingSpinner';
+import { Toaster } from './components/ui/Toaster';
+
+const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
+const MfaVerifyPage = lazy(() => import('./pages/auth/MfaVerifyPage'));
+const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage'));
+const ContainersPage = lazy(() => import('./pages/containers/ContainersPage'));
+const ContainerDetailPage = lazy(() => import('./pages/containers/ContainerDetailPage'));
+const VehicleDeliveryPage = lazy(() => import('./pages/vehicles/VehicleDeliveryPage'));
+const ReportsPage = lazy(() => import('./pages/reports/ReportsPage'));
+const UsersPage = lazy(() => import('./pages/users/UsersPage'));
+const SettingsPage = lazy(() => import('./pages/settings/SettingsPage'));
+
+const PageSkeleton = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <LoadingSpinner size="lg" />
+  </div>
+);
+
+const PrivateRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles?: string[] }) => {
+  const { isAuthenticated, isLoading, user } = useAuth();
+
+  if (isLoading) {
+    return <PageSkeleton />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && user && !allowedRoles.some(role => user.roles.includes(role))) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <PageSkeleton />;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+const AppRoutes = () => {
+  const { resolvedTheme } = useTheme();
+
+  return (
+    <div className={resolvedTheme === 'dark' ? 'dark' : ''}>
+      <Suspense fallback={<PageSkeleton />}>
+        <Routes>
+          <Route path="/login" element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          } />
+          <Route path="/mfa-verify" element={
+            <PublicRoute>
+              <MfaVerifyPage />
+            </PublicRoute>
+          } />
+          <Route element={
+            <PrivateRoute>
+              <Layout />
+            </PrivateRoute>
+          }>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/containers" element={<ContainersPage />} />
+            <Route path="/containers/:id" element={<ContainerDetailPage />} />
+            <Route path="/vehicles/deliver" element={<VehicleDeliveryPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/users" element={
+              <PrivateRoute allowedRoles={['Admin']}>
+                <UsersPage />
+              </PrivateRoute>
+            } />
+          </Route>
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </Suspense>
+      <Toaster />
+    </div>
+  );
+};
+
+const App = () => {
+  return <AppRoutes />;
+};
+
+export default App;

@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: container-delivery-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "YourStrong@Passw0rd" -Q "SELECT 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - container-delivery-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: container-delivery-redis
+    command: redis-server --appendonly yes --requirepass "RedisStrong@Passw0rd"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: redis-cli -a "RedisStrong@Passw0rd" ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - container-delivery-network
+
+  # Backend API
+  api:
+    build:
+      context: ./Backend
+      dockerfile: src/ContainerDelivery.Api/Dockerfile
+    container_name: container-delivery-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ContainerDeliveryDB;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - Redis__ConnectionString=redis:6379,password=RedisStrong@Passw0rd,abortConnect=False
+      - JwtSettings__SecretKey=your-super-secret-key-with-at-least-32-characters-long-for-development
+      - JwtSettings__Issuer=https://localhost:5001
+      - JwtSettings__Audience=https://localhost:5001
+      - JwtSettings__AccessTokenExpiryMinutes=15
+      - JwtSettings__RefreshTokenExpiryDays=7
+      - BlobStorage__ConnectionString=UseDevelopmentStorage=true
+      - EmailSettings__SmtpHost=mailhog
+      - EmailSettings__SmtpPort=1025
+      - EmailSettings__SmtpUser=test@test.com
+      - EmailSettings__SmtpPassword=test
+      - EmailSettings__FromEmail=noreply@localhost
+      - EmailSettings__FromName=Container Delivery System
+      - AllowedOrigins__0=http://localhost:3000
+      - AllowedOrigins__1=http://localhost:5173
+    ports:
+      - "5001:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - container-delivery-network
+    volumes:
+      - ./Backend:/src:ro
+
+  # Frontend
+  frontend:
+    build:
+      context: ./Frontend/container-delivery-frontend
+      dockerfile: Dockerfile
+    container_name: container-delivery-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - container-delivery-network
+
+  # Mailhog for email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: container-delivery-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - container-delivery-network
+
+  # Azurite for local blob storage
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: container-delivery-azurite
+    ports:
+      - "10000:10000"  # Blob
+      - "10001:10001"  # Queue
+      - "10002:10002"  # Table
+    volumes:
+      - azurite_data:/data
+    networks:
+      - container-delivery-network
+
+volumes:
+  sqlserver_data:
+  redis_data:
+  azurite_data:
+
+networks:
+  container-delivery-network:
+    driver: bridge
