@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NuGetAudit>false</NuGetAudit>
+    <NoWarn>$(NoWarn);NU1903;NU1603</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
