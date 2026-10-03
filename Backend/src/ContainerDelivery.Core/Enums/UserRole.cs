@@ -19,12 +19,6 @@ public static class UserRoleExtensions
     }
 }
 
-public enum DeliveryMethod
-{
-    BarcodeScan = 0,
-    Manual = 1
-}
-
 public enum AuditAction
 {
     Create = 0,
