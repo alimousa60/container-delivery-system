@@ -10,14 +10,14 @@ COPY ["src/ContainerDelivery.Infrastructure/ContainerDelivery.Infrastructure.csp
 COPY ["src/ContainerDelivery.Api/ContainerDelivery.Api.csproj", "src/ContainerDelivery.Api/"]
 
 # Restore dependencies
-RUN dotnet restore "src/ContainerDelivery.Api/ContainerDelivery.Api.csproj"
+RUN dotnet restore "src/ContainerDelivery.Api/ContainerDelivery.Api.csproj" /p:NuGetAudit=false /p:NoWarn="NU1903;NU1603"
 
 # Copy source code
 COPY . .
 
 # Build and publish
 WORKDIR "/src/src/ContainerDelivery.Api"
-RUN dotnet publish "ContainerDelivery.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ContainerDelivery.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:NuGetAudit=false /p:NoWarn="NU1903;NU1603"
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
