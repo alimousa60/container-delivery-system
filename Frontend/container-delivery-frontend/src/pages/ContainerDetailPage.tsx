@@ -333,7 +333,7 @@ export const ContainerDetailPage: React.FC = () => {
       <Modal
         isOpen={showDeliverModal}
         onClose={() => setShowDeliverModal(false)}
-        title={t('vehicles.markDelivered)}
+        title={t('vehicles.markDelivered')}
         size="md"
       >
         <form onSubmit={(e) => { 

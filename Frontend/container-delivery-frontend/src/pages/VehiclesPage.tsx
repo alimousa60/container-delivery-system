@@ -104,7 +104,7 @@ export const VehiclesPage: React.FC = () => {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <Input
-                placeholder={t('vehicles.searchPlaceholder)}
+                placeholder={t('vehicles.searchPlaceholder')}
                 value={search}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="pl-10"

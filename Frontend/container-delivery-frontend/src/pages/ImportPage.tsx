@@ -121,7 +121,7 @@ export const ImportPage: React.FC = () => {
       render: (batch) => (
         <div className="flex items-center justify-end gap-2">
           {batch.failedRecords > 0 && (
-            <Button variant="ghost" size="sm" onClick={() => alert(batch.errorDetails || 'No errors')} leftIcon={<AlertCircle className="w-4 h-4" }>Errors</Button>
+            <Button variant="ghost" size="sm" onClick={() => alert(batch.errorDetails || 'No errors')} leftIcon={<AlertCircle className="w-4 h-4" />}>Errors</Button>
           )}
         </div>
       ),
@@ -209,7 +209,7 @@ export const ImportPage: React.FC = () => {
                   onChange={(e) => setContainerPrefix(e.target.value)}
                   className="w-full max-w-md"
                 />
-                <Button variant="primary" onClick={handleUpload} loading={importMutation.isPending} leftIcon={<Upload className="w-4 h-4" }} disabled={importMutation.isPending}>
+                <Button variant="primary" onClick={handleUpload} loading={importMutation.isPending} leftIcon={<Upload className="w-4 h-4" />} disabled={importMutation.isPending}>
                   {importMutation.isPending ? 'Importing...' : t('import.uploadFile')}
                 </Button>
               </div>
@@ -233,7 +233,7 @@ export const ImportPage: React.FC = () => {
                 <p className="text-gray-500 dark:text-gray-400 mt-1">{t('import.requiredColumns')}</p>
               </div>
               <label className="cursor-pointer">
-                <Button variant="outline" leftIcon={<Upload className="w-4 h-4" }}>
+                <Button variant="outline" leftIcon={<Upload className="w-4 h-4" />}>
                   {t('import.uploadFile')}
                 </Button>
                 <input
@@ -243,7 +243,7 @@ export const ImportPage: React.FC = () => {
                   className="sr-only"
                 />
               </label>
-              <Button variant="ghost" onClick={() => window.open('/template.xlsx', '_blank')} leftIcon={<Download className="w-4 h-4" }}>
+              <Button variant="ghost" onClick={() => window.open('/template.xlsx', '_blank')} leftIcon={<Download className="w-4 h-4" />}>
                 {t('import.downloadTemplate')}
               </Button>
             </div>

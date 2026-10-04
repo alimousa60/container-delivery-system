@@ -147,7 +147,7 @@ export const SettingsPage: React.FC = () => {
                 />
               </div>
               <div className="flex justify-end">
-                <Button type="submit" variant="primary" loading={isSaving} leftIcon={<User className="w-4 h-4" }}>
+                <Button type="submit" variant="primary" loading={isSaving} leftIcon={<User className="w-4 h-4" />}>
                   Save Changes
                 </Button>
               </div>
@@ -185,7 +185,7 @@ export const SettingsPage: React.FC = () => {
                 />
               </div>
               <div className="flex justify-end">
-                <Button type="submit" variant="primary" loading={isSaving} leftIcon={<Lock className="w-4 h-4" }}>
+                <Button type="submit" variant="primary" loading={isSaving} leftIcon={<Lock className="w-4 h-4" />}>
                   {t('auth.changePassword')}
                 </Button>
               </div>

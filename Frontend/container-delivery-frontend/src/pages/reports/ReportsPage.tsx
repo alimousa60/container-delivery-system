@@ -145,10 +145,10 @@ export const ReportsPage: React.FC = () => {
           <p className="text-gray-500 dark:text-gray-400 mt-1">View and generate container delivery reports</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setShowBulkModal(true)} leftIcon={<Plus className="w-4 h-4" }}>
+          <Button variant="outline" onClick={() => setShowBulkModal(true)} leftIcon={<Plus className="w-4 h-4" />}>
             {t('reports.bulkGenerate')}
           </Button>
-          <Button variant="primary" leftIcon={<RefreshCw className="w-4 h-4" }} onClick={() => queryClient.invalidateQueries({ queryKey: ['reports'] })}>
+          <Button variant="primary" leftIcon={<RefreshCw className="w-4 h-4" />} onClick={() => queryClient.invalidateQueries({ queryKey: ['reports'] })}>
             {t('common.refresh')}
           </Button>
         </div>
@@ -177,7 +177,7 @@ export const ReportsPage: React.FC = () => {
       <Modal
         isOpen={showBulkModal}
         onClose={() => setShowBulkModal(false)}
-        title={t('reports.bulkGenerate)}
+        title={t('reports.bulkGenerate')}
         size="md"
       >
         <div className="space-y-4">

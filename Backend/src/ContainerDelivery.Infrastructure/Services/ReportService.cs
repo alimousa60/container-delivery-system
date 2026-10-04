@@ -405,7 +405,7 @@ public class ReportService : IReportService
 
                     static IContainer HeaderCellStyle(IContainer c) => c.Padding(8).Background(Colors.Blue.Darken2).FontColor(Colors.White).FontSize(9);
                     static IContainer DataCellStyle(IContainer c, string bgColor) => c.Padding(8).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Background(bgColor).FontSize(9);
-                }
+                });
             }
 
             void ComposeSignatureSection(IContainer container)
