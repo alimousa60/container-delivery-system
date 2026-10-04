@@ -178,8 +178,8 @@ public class ReportService : IReportService
                                 c.Item().Text("VEHICLE DELIVERY REPORT").FontSize(11).FontColor(Colors.Grey.Medium).LetterSpacing(1);
                             });
                         });
-                    });
-                    
+                    }
+
                     col.Item().PaddingTop(10).Row(r =>
                     {
                         r.AutoItem().Text($"Container: ").SemiBold().FontSize(11).FontColor(Colors.Grey.Darken1);
@@ -457,6 +457,7 @@ public class ReportService : IReportService
                 });
             });
         }
+    }
 
     private string SanitizeFileName(string fileName)
     {

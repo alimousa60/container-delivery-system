@@ -194,7 +194,7 @@ public class ContainerService : IContainerService
             NewValues = JsonSerializer.Serialize(new { container.Status, container.ClosedAt, container.ClosedByUserId }),
             IpAddress = null,
             UserAgent = null
-        );
+        });
 
         return container;
     }
