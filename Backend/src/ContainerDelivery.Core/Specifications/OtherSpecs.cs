@@ -46,42 +46,20 @@ public class AuditLogsPagedSpec : BaseSpecification<AuditLog>
 {
     public AuditLogsPagedSpec(int page, int pageSize, int? userId = null, AuditAction? action = null, EntityType? entityType = null, int? entityId = null, DateTime? fromDate = null, DateTime? toDate = null)
     {
-        Criteria = a => true;
+        var uid = userId;
+        var act = action;
+        var et = entityType;
+        var eid = entityId;
+        var from = fromDate;
+        var to = toDate;
 
-        if (userId.HasValue)
-        {
-            Criteria = a => a.UserId == userId.Value;
-        }
-
-        if (action.HasValue)
-        {
-            var actionCriteria = Criteria;
-            Criteria = a => actionCriteria(a) && a.Action == action.Value;
-        }
-
-        if (entityType.HasValue)
-        {
-            var entityCriteria = Criteria;
-            Criteria = a => entityCriteria(a) && a.EntityType == entityType.Value;
-        }
-
-        if (entityId.HasValue)
-        {
-            var entityIdCriteria = Criteria;
-            Criteria = a => entityIdCriteria(a) && a.EntityId == entityId.Value;
-        }
-
-        if (fromDate.HasValue)
-        {
-            var dateCriteria = Criteria;
-            Criteria = a => dateCriteria(a) && a.CreatedAt >= fromDate.Value;
-        }
-
-        if (toDate.HasValue)
-        {
-            var dateCriteria = Criteria;
-            Criteria = a => dateCriteria(a) && a.CreatedAt <= toDate.Value;
-        }
+        Criteria = a =>
+            (uid == null || a.UserId == uid.Value) &&
+            (act == null || a.Action == act.Value) &&
+            (et == null || a.EntityType == et.Value) &&
+            (eid == null || a.EntityId == eid.Value) &&
+            (from == null || a.CreatedAt >= from.Value) &&
+            (to == null || a.CreatedAt <= to.Value);
 
         ApplyOrderByDescending(a => a.CreatedAt);
         ApplyPaging((page - 1) * pageSize, pageSize);
@@ -93,42 +71,20 @@ public class AuditLogsCountSpec : BaseSpecification<AuditLog>
 {
     public AuditLogsCountSpec(int? userId = null, AuditAction? action = null, EntityType? entityType = null, int? entityId = null, DateTime? fromDate = null, DateTime? toDate = null)
     {
-        Criteria = a => true;
+        var uid = userId;
+        var act = action;
+        var et = entityType;
+        var eid = entityId;
+        var from = fromDate;
+        var to = toDate;
 
-        if (userId.HasValue)
-        {
-            Criteria = a => a.UserId == userId.Value;
-        }
-
-        if (action.HasValue)
-        {
-            var actionCriteria = Criteria;
-            Criteria = a => actionCriteria(a) && a.Action == action.Value;
-        }
-
-        if (entityType.HasValue)
-        {
-            var entityCriteria = Criteria;
-            Criteria = a => entityCriteria(a) && a.EntityType == entityType.Value;
-        }
-
-        if (entityId.HasValue)
-        {
-            var entityIdCriteria = Criteria;
-            Criteria = a => entityIdCriteria(a) && a.EntityId == entityId.Value;
-        }
-
-        if (fromDate.HasValue)
-        {
-            var dateCriteria = Criteria;
-            Criteria = a => dateCriteria(a) && a.CreatedAt >= fromDate.Value;
-        }
-
-        if (toDate.HasValue)
-        {
-            var dateCriteria = Criteria;
-            Criteria = a => dateCriteria(a) && a.CreatedAt <= toDate.Value;
-        }
+        Criteria = a =>
+            (uid == null || a.UserId == uid.Value) &&
+            (act == null || a.Action == act.Value) &&
+            (et == null || a.EntityType == et.Value) &&
+            (eid == null || a.EntityId == eid.Value) &&
+            (from == null || a.CreatedAt >= from.Value) &&
+            (to == null || a.CreatedAt <= to.Value);
     }
 }
 
@@ -136,18 +92,12 @@ public class AuditLogsExportSpec : BaseSpecification<AuditLog>
 {
     public AuditLogsExportSpec(DateTime? fromDate = null, DateTime? toDate = null)
     {
-        Criteria = a => true;
+        var from = fromDate;
+        var to = toDate;
 
-        if (fromDate.HasValue)
-        {
-            Criteria = a => a.CreatedAt >= fromDate.Value;
-        }
-
-        if (toDate.HasValue)
-        {
-            var dateCriteria = Criteria;
-            Criteria = a => dateCriteria(a) && a.CreatedAt <= toDate.Value;
-        }
+        Criteria = a =>
+            (from == null || a.CreatedAt >= from.Value) &&
+            (to == null || a.CreatedAt <= to.Value);
 
         ApplyOrderByDescending(a => a.CreatedAt);
         AddInclude(a => a.User);

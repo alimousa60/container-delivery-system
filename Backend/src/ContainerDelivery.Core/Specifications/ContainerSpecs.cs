@@ -26,19 +26,12 @@ public class ContainersPagedSpec : BaseSpecification<Container>
 {
     public ContainersPagedSpec(int page, int pageSize, ContainerStatus? status = null, string? search = null, string? sortBy = null, string? sortOrder = null)
     {
-        Criteria = c => true;
+        var statusValue = status;
+        var term = string.IsNullOrWhiteSpace(search) ? null : search.ToLower();
 
-        if (status.HasValue)
-        {
-            Criteria = c => c.Status == status.Value;
-        }
-
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            var term = search.ToLower();
-            var searchCriteria = Criteria;
-            Criteria = c => searchCriteria(c) && c.ContainerNumber.ToLower().Contains(term);
-        }
+        Criteria = c =>
+            (statusValue == null || c.Status == statusValue.Value) &&
+            (term == null || c.ContainerNumber.ToLower().Contains(term));
 
         ApplySorting(sortBy, sortOrder);
         ApplyPaging((page - 1) * pageSize, pageSize);
@@ -72,19 +65,12 @@ public class ContainersCountSpec : BaseSpecification<Container>
 {
     public ContainersCountSpec(ContainerStatus? status = null, string? search = null)
     {
-        Criteria = c => true;
+        var statusValue = status;
+        var term = string.IsNullOrWhiteSpace(search) ? null : search.ToLower();
 
-        if (status.HasValue)
-        {
-            Criteria = c => c.Status == status.Value;
-        }
-
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            var term = search.ToLower();
-            var searchCriteria = Criteria;
-            Criteria = c => searchCriteria(c) && c.ContainerNumber.ToLower().Contains(term);
-        }
+        Criteria = c =>
+            (statusValue == null || c.Status == statusValue.Value) &&
+            (term == null || c.ContainerNumber.ToLower().Contains(term));
     }
 }
 
@@ -102,14 +88,11 @@ public class ContainersArchiveSpec : BaseSpecification<Container>
 {
     public ContainersArchiveSpec(int page, int pageSize, string? search = null)
     {
-        Criteria = c => c.Status == ContainerStatus.Closed;
+        var term = string.IsNullOrWhiteSpace(search) ? null : search.ToLower();
 
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            var term = search.ToLower();
-            var searchCriteria = Criteria;
-            Criteria = c => searchCriteria(c) && c.ContainerNumber.ToLower().Contains(term);
-        }
+        Criteria = c =>
+            c.Status == ContainerStatus.Closed &&
+            (term == null || c.ContainerNumber.ToLower().Contains(term));
 
         ApplyOrderByDescending(c => c.ClosedAt);
         ApplyPaging((page - 1) * pageSize, pageSize);
@@ -122,13 +105,10 @@ public class ContainersArchiveCountSpec : BaseSpecification<Container>
 {
     public ContainersArchiveCountSpec(string? search = null)
     {
-        Criteria = c => c.Status == ContainerStatus.Closed;
+        var term = string.IsNullOrWhiteSpace(search) ? null : search.ToLower();
 
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            var term = search.ToLower();
-            var searchCriteria = Criteria;
-            Criteria = c => searchCriteria(c) && c.ContainerNumber.ToLower().Contains(term);
-        }
+        Criteria = c =>
+            c.Status == ContainerStatus.Closed &&
+            (term == null || c.ContainerNumber.ToLower().Contains(term));
     }
 }

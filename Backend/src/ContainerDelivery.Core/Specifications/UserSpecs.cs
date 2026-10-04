@@ -26,25 +26,14 @@ public class UsersPagedSpec : BaseSpecification<User>
 {
     public UsersPagedSpec(int page, int pageSize, string? search = null, UserRole? role = null, bool? isActive = null)
     {
-        Criteria = u => true;
+        var term = string.IsNullOrWhiteSpace(search) ? null : search.ToLower();
+        var roleValue = role;
+        var activeValue = isActive;
 
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            var term = search.ToLower();
-            Criteria = u => u.Email.ToLower().Contains(term) || u.FullName.ToLower().Contains(term);
-        }
-
-        if (role.HasValue)
-        {
-            var roleId = (int)role.Value;
-            Criteria = u => u.UserRoles.Any(ur => ur.Role == role.Value);
-        }
-
-        if (isActive.HasValue)
-        {
-            var activeCriteria = Criteria;
-            Criteria = u => activeCriteria(u) && u.IsActive == isActive.Value;
-        }
+        Criteria = u =>
+            (term == null || u.Email.ToLower().Contains(term) || u.FullName.ToLower().Contains(term)) &&
+            (roleValue == null || u.UserRoles.Any(ur => ur.Role == roleValue.Value)) &&
+            (activeValue == null || u.IsActive == activeValue.Value);
 
         ApplyOrderByDescending(u => u.CreatedAt);
         ApplyPaging((page - 1) * pageSize, pageSize);
@@ -56,24 +45,13 @@ public class UsersCountSpec : BaseSpecification<User>
 {
     public UsersCountSpec(string? search = null, UserRole? role = null, bool? isActive = null)
     {
-        Criteria = u => true;
+        var term = string.IsNullOrWhiteSpace(search) ? null : search.ToLower();
+        var roleValue = role;
+        var activeValue = isActive;
 
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            var term = search.ToLower();
-            Criteria = u => u.Email.ToLower().Contains(term) || u.FullName.ToLower().Contains(term);
-        }
-
-        if (role.HasValue)
-        {
-            var roleId = (int)role.Value;
-            Criteria = u => u.UserRoles.Any(ur => ur.Role == role.Value);
-        }
-
-        if (isActive.HasValue)
-        {
-            var activeCriteria = Criteria;
-            Criteria = u => activeCriteria(u) && u.IsActive == isActive.Value;
-        }
+        Criteria = u =>
+            (term == null || u.Email.ToLower().Contains(term) || u.FullName.ToLower().Contains(term)) &&
+            (roleValue == null || u.UserRoles.Any(ur => ur.Role == roleValue.Value)) &&
+            (activeValue == null || u.IsActive == activeValue.Value);
     }
 }
