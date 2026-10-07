@@ -104,3 +104,5 @@ export const useToast = () => {
     info: (message: string, duration?: number) => addToast({ type: 'info', message, duration }),
   };
 };
+
+export const Toaster: React.FC = () => <ToastContainer />;

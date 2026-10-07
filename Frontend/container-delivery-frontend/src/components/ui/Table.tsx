@@ -2,7 +2,7 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { ChevronUp, ChevronDown, ChevronUpDown } from 'lucide-react';
 
-interface TableColumn<T> {
+export interface TableColumn<T> {
   key: string;
   header: string;
   render?: (item: T, index: number) => React.ReactNode;

@@ -71,7 +71,7 @@ export interface Container {
   vehicles?: Vehicle[];
 }
 
-export type ContainerStatus = 'NotStarted' | 'InProgress' | 'FullyDelivered';
+export type ContainerStatus = 'NotStarted' | 'InProgress' | 'FullyDelivered' | 'Closed';
 
 export interface Vehicle {
   id: number;
@@ -284,4 +284,52 @@ export interface TableColumn<T> {
 export interface SelectOption {
   value: string;
   label: string;
+}
+
+export type UserRole = 'Admin' | 'DeliveryUser';
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
+export interface BulkReportError {
+  containerId: number;
+  error: string;
+}
+
+export interface BulkReportResult {
+  successCount: number;
+  failureCount: number;
+  errors: BulkReportError[];
+}
+
+export interface CompanySettingsDto {
+  id: number;
+  companyName: string;
+  logoUrl?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  reportFooter?: string | null;
+  website?: string | null;
+  isActive: boolean;
+  createdAt: string;
+  lastModifiedAt?: string | null;
+  lastModifiedBy?: string | null;
+}
+
+export interface UpdateSettingsRequest {
+  companyName: string;
+  logoUrl?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  reportFooter?: string | null;
+  website?: string | null;
+  isActive: boolean;
 }

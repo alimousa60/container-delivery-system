@@ -40,7 +40,7 @@ export const ImportPage: React.FC = () => {
     },
     onSuccess: (result) => {
       setUploadProgress(100);
-      setCurrentImportId(result.id);
+      setCurrentImportId(result.importBatchId);
       queryClient.invalidateQueries({ queryKey: ['imports'] });
       queryClient.invalidateQueries({ queryKey: ['containers'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });

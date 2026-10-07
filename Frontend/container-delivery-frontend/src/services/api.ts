@@ -34,7 +34,9 @@ import type {
   AssignRoleRequest,
   AdminResetPasswordRequest,
   ImportResultDto as ImportResultDtoType,
-  ImportBatchStatusDto as ImportBatchStatusDtoType
+  ImportBatchStatusDto as ImportBatchStatusDtoType,
+  CompanySettingsDto,
+  UpdateSettingsRequest
 } from '@/types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
@@ -98,7 +100,8 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { refreshToken, refreshToken: refresh } = useAuthStore.getState();
+        const { tokens } = useAuthStore.getState();
+        const refreshToken = tokens?.refreshToken;
         if (!refreshToken) {
           throw new Error('No refresh token');
         }
@@ -244,6 +247,11 @@ export const containerService = {
     return response.data;
   },
 
+  getImports: async (params?: { page?: number; pageSize?: number }): Promise<PagedResponse<ImportBatch>> => {
+    const response = await api.get('/containers/import', { params });
+    return response.data;
+  },
+
   generateReport: async (containerId: number): Promise<ContainerReport> => {
     const response = await api.post(`/reports/container/${containerId}`);
     return response.data;
@@ -312,6 +320,15 @@ export const reportService = {
     const response = await api.post('/reports/bulk', { containerIds });
     return response.data;
   },
+
+  getAll: async (params?: { page?: number; pageSize?: number }): Promise<PagedResponse<ContainerReport>> => {
+    const response = await api.get('/reports', { params });
+    return response.data;
+  },
+
+  delete: async (reportId: number): Promise<void> => {
+    await api.delete(`/reports/${reportId}`);
+  },
 };
 
 export const userService = {
@@ -377,6 +394,27 @@ export const auditService = {
     const response = await api.get('/audit-logs/export', { 
       params: { fromDate, toDate },
       responseType: 'blob',
+    });
+    return response.data;
+  },
+};
+
+export const settingsService = {
+  getAll: async (): Promise<CompanySettingsDto> => {
+    const response = await api.get('/settings');
+    return response.data;
+  },
+
+  update: async (data: UpdateSettingsRequest): Promise<CompanySettingsDto> => {
+    const response = await api.put('/settings', data);
+    return response.data;
+  },
+
+  uploadLogo: async (file: File): Promise<CompanySettingsDto> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await api.post('/settings/logo', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
   },

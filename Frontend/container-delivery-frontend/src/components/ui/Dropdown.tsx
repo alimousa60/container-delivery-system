@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
 
-interface DropdownItem {
+export interface DropdownItem {
   label: string;
   onClick: () => void;
   icon?: React.ReactNode;
