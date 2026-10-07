@@ -81,7 +81,7 @@ public class ApplicationDbContext : DbContext
             .HasMany(v => v.DeliveryRecords)
             .WithOne(dr => dr.Vehicle)
             .HasForeignKey(dr => dr.VehicleId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Container>()
             .HasMany(c => c.Reports)
@@ -94,6 +94,24 @@ public class ApplicationDbContext : DbContext
             .WithOne(ur => ur.User)
             .HasForeignKey(ur => ur.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserRole>()
+            .HasOne(ur => ur.AssignedByUser)
+            .WithMany()
+            .HasForeignKey(ur => ur.AssignedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ContainerReport>()
+            .HasOne(r => r.GeneratedByUser)
+            .WithMany()
+            .HasForeignKey(r => r.GeneratedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ImportBatch>()
+            .HasOne(b => b.ImportedByUser)
+            .WithMany()
+            .HasForeignKey(b => b.ImportedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Container>()
             .HasOne(c => c.CreatedByUser)
