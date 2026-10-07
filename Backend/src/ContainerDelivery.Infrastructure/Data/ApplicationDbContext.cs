@@ -95,6 +95,18 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(ur => ur.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<Container>()
+            .HasOne(c => c.CreatedByUser)
+            .WithMany(u => u.CreatedContainers)
+            .HasForeignKey(c => c.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Container>()
+            .HasOne(c => c.ClosedByUser)
+            .WithMany(u => u.ClosedContainers)
+            .HasForeignKey(c => c.ClosedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         // Seed Roles
         modelBuilder.Entity<Role>().HasData(
             new Role { Id = 1, Name = UserRoleEnum.Admin, Description = "Full system access including user management, audit logs, and container deletion" },
