@@ -24,6 +24,7 @@ public class SettingsController : ControllerBase
     /// Get company settings
     /// </summary>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(CompanySettingsDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetSettings()
     {

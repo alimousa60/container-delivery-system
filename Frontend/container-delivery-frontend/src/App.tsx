@@ -4,7 +4,6 @@ import { useAuth } from './context/AuthContext';
 import { useTheme } from './context/ThemeContext';
 import { Layout } from './components/layout/Layout';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
-import { Toaster } from './components/ui/Toaster';
 
 const LoginPage = lazy(() => import('./pages/auth/LoginPage').then(m => ({ default: m.LoginPage })));
 const MfaVerifyPage = lazy(() => import('./pages/auth/MfaVerifyPage').then(m => ({ default: m.MfaVerifyPage })));
@@ -103,7 +102,6 @@ const AppRoutes = () => {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Suspense>
-      <Toaster />
     </div>
   );
 };

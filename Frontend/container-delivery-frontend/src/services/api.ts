@@ -1,5 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-import { useAuthStore } from '@/store/authStore';
+﻿import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import type { 
   User, 
   AuthTokens, 
@@ -55,6 +54,35 @@ let failedQueue: Array<{
   reject: (reason: unknown) => void;
 }> = [];
 
+const readStoredTokens = (): { accessToken?: string; refreshToken?: string; expiresAt?: number } | null => {
+  try {
+    const raw = localStorage.getItem('auth_tokens');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeStoredTokens = (tokens: { accessToken: string; refreshToken: string; expiresAt: number }) => {
+  try {
+    localStorage.setItem('auth_tokens', JSON.stringify(tokens));
+  } catch {
+    // storage unavailable - requests will still work until reload
+  }
+};
+
+const clearStoredAuth = () => {
+  try {
+    localStorage.removeItem('auth_tokens');
+    localStorage.removeItem('auth_user');
+    localStorage.removeItem('pending_mfa_user');
+  } catch {
+    // ignore
+  }
+};
+
 const processQueue = (error: Error | null, token: string | null = null) => {
   failedQueue.forEach(({ resolve, reject }) => {
     if (error) {
@@ -68,7 +96,7 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const tokens = useAuthStore.getState().tokens;
+    const tokens = readStoredTokens();
     if (tokens?.accessToken) {
       config.headers.Authorization = `Bearer ${tokens.accessToken}`;
     }
@@ -100,8 +128,8 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { tokens } = useAuthStore.getState();
-        const refreshToken = tokens?.refreshToken;
+        const storedTokens = readStoredTokens();
+        const refreshToken = storedTokens?.refreshToken;
         if (!refreshToken) {
           throw new Error('No refresh token');
         }
@@ -109,7 +137,7 @@ api.interceptors.response.use(
         const response = await axios.post(`${API_BASE_URL}/auth/refresh`, { refreshToken });
         const { accessToken, refreshToken: newRefreshToken, expiresIn } = response.data;
 
-        useAuthStore.getState().setTokens({
+        writeStoredTokens({
           accessToken,
           refreshToken: newRefreshToken,
           expiresAt: Date.now() + (expiresIn || 900) * 1000,
@@ -124,8 +152,10 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError as Error, null);
-        useAuthStore.getState().clearAuth();
-        window.location.href = '/login';
+        clearStoredAuth();
+        if (!window.location.pathname.startsWith('/login')) {
+          window.location.href = '/login';
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
