@@ -23,15 +23,19 @@ import {
   Play, 
   FileText,
   ChevronDown,
-  MoreVertical
+  MoreVertical,
+  Lock,
+  RotateCcw,
+  Archive
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
 const statusOptions = [
-  { value: '', label: 'All Statuses' },
-  { value: 'NotStarted', label: 'Not Started' },
-  { value: 'InProgress', label: 'In Progress' },
-  { value: 'FullyDelivered', label: 'Fully Delivered' },
+  { value: '', labelKey: 'allStatuses' },
+  { value: 'NotStarted', labelKey: 'notStarted' },
+  { value: 'InProgress', labelKey: 'inProgress' },
+  { value: 'FullyDelivered', labelKey: 'fullyDelivered' },
+  { value: 'Closed', labelKey: 'closed' },
 ];
 
 export const ContainersPage: React.FC = () => {
@@ -73,6 +77,26 @@ export const ContainersPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['containers'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       showSuccess(t('containers.deleteSuccess'));
+    },
+    onError: (err: Error) => showError(err.message),
+  });
+
+  const closeMutation = useMutation({
+    mutationFn: (id: number) => containerService.close(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['containers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+      showSuccess(t('containers.closeSuccess'));
+    },
+    onError: (err: Error) => showError(err.message),
+  });
+
+  const reopenMutation = useMutation({
+    mutationFn: (id: number) => containerService.reopen(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['containers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+      showSuccess(t('containers.reopenSuccess'));
     },
     onError: (err: Error) => showError(err.message),
   });
@@ -168,6 +192,24 @@ export const ContainersPage: React.FC = () => {
                 }
               }
             },
+            container.status === 'FullyDelivered' && {
+              label: t('containers.close'),
+              icon: <Lock className="w-4 h-4" />,
+              onClick: () => {
+                if (confirm(t('containers.closeConfirm'))) {
+                  closeMutation.mutate(container.id);
+                }
+              },
+            },
+            container.status === 'Closed' && {
+              label: t('containers.reopen'),
+              icon: <RotateCcw className="w-4 h-4" />,
+              onClick: () => {
+                if (confirm(t('containers.reopenConfirm'))) {
+                  reopenMutation.mutate(container.id);
+                }
+              },
+            },
             { 
               label: t('reports.generateReport'), 
               icon: <FileText className="w-4 h-4" />, 
@@ -237,9 +279,18 @@ export const ContainersPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('containers.title')}</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">Manage shipping containers and track vehicle deliveries</p>
         </div>
-        <Button onClick={() => setShowCreateModal(true)} leftIcon={<Plus className="w-4 h-4" />}>
-          {t('containers.createContainer')}
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <Button
+            variant="secondary"
+            onClick={() => (window.location.href = '/archive')}
+            leftIcon={<Archive className="w-4 h-4" />}
+          >
+            {t('containers.archive')}
+          </Button>
+          <Button onClick={() => setShowCreateModal(true)} leftIcon={<Plus className="w-4 h-4" />}>
+            {t('containers.createContainer')}
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -262,7 +313,7 @@ export const ContainersPage: React.FC = () => {
               className="input w-auto min-w-[180px]"
             >
               {statusOptions.map(opt => (
-                <option key={opt.value} value={opt.value}>{t(`containers.${opt.value.toLowerCase()}`) || opt.label}</option>
+                <option key={opt.value} value={opt.value}>{t(`containers.${opt.labelKey}`)}</option>
               ))}
             </select>
           </div>

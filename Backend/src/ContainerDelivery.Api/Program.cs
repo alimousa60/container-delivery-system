@@ -333,6 +333,8 @@ builder.Services.AddMemoryCache(options =>
 // ============================================================================
 var app = builder.Build();
 
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
 // ============================================================================
 // MIDDLEWARE PIPELINE
 // ============================================================================
@@ -409,15 +411,13 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        var context = services.GetRequiredService<ApplicationDbContext>();
         var logger = services.GetRequiredService<ILogger<Program>>();
         
-        logger.LogInformation("Applying database migrations...");
-        await context.Database.MigrateAsync();
-        logger.LogInformation("Database migrations applied successfully.");
-
-        // Seed default data
+        logger.LogInformation("Ensuring database schema...");
+        // No EF migrations exist in this project - schema is created via EnsureCreated
+        // inside SeedData.InitializeAsync, which also seeds default roles and users.
         await SeedData.InitializeAsync(services);
+        logger.LogInformation("Database schema ready and seed data applied.");
     }
     catch (Exception ex)
     {

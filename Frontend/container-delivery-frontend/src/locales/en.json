@@ -110,7 +110,18 @@
     "importError": "Import failed",
     "containerNumberRequired": "Container number is required",
     "containerNumberExists": "Container number already exists",
-    "warningPending": "Warning: There are still vehicles pending delivery in this container."
+    "warningPending": "Warning: There are still vehicles pending delivery in this container.",
+    "closed": "Closed",
+    "close": "Close Container",
+    "closeConfirm": "Close this container? It will become read-only.",
+    "closeSuccess": "Container closed successfully",
+    "reopen": "Reopen Container",
+    "reopenConfirm": "Reopen this container? Vehicles can be delivered again.",
+    "reopenSuccess": "Container reopened successfully",
+    "archive": "Archive",
+    "archiveSubtitle": "Archived and closed containers",
+    "archiveError": "Failed to load archive",
+    "noArchived": "No archived containers found"
   },
   "vehicles": {
     "title": "Vehicles",
@@ -174,6 +185,7 @@
     "error": "Error",
     "downloadTemplate": "Download Template",
     "requiredColumns": "Required columns: Container Number, VIN, Vehicle Description",
+    "containerNumberPrefix": "Container Number Prefix",
     "duplicateVIN": "Duplicate VIN",
     "invalidVIN": "Invalid VIN format"
   },
@@ -222,9 +234,21 @@
     "reports": "Reports",
     "import": "Import",
     "users": "Users",
+    "auditLogs": "Audit Logs",
     "settings": "Settings",
     "profile": "Profile",
     "logout": "Logout"
+  },
+  "audit": {
+    "title": "Audit Logs",
+    "action": "Action",
+    "entityType": "Entity Type",
+    "entityId": "Entity ID",
+    "ipAddress": "IP Address",
+    "timestamp": "Timestamp",
+    "user": "User",
+    "noLogs": "No audit logs found",
+    "exportLogs": "Export Logs"
   },
   "errors": {
     "networkError": "Network error. Please check your connection.",

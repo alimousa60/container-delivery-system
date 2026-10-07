@@ -110,7 +110,18 @@
     "importError": "فشل الاستيراد",
     "containerNumberRequired": "رقم الحاوية مطلوب",
     "containerNumberExists": "رقم الحاوية موجود مسبقاً",
-    "warningPending": "تحذير: لا تزال هناك مركبات بانتظار التسليم في هذه الحاوية."
+    "warningPending": "تحذير: لا تزال هناك مركبات بانتظار التسليم في هذه الحاوية.",
+    "closed": "مغلقة",
+    "close": "إغلاق الحاوية",
+    "closeConfirm": "إغلاق هذه الحاوية؟ ستصبح للقراءة فقط.",
+    "closeSuccess": "تم إغلاق الحاوية بنجاح",
+    "reopen": "إعادة فتح الحاوية",
+    "reopenConfirm": "إعادة فتح هذه الحاوية؟ يمكن تسليم المركبات مرة أخرى.",
+    "reopenSuccess": "تم إعادة فتح الحاوية بنجاح",
+    "archive": "الأرشيف",
+    "archiveSubtitle": "الحاويات المؤرشفة والمغلقة",
+    "archiveError": "فشل تحميل الأرشيف",
+    "noArchived": "لا توجد حاويات مؤرشفة"
   },
   "vehicles": {
     "title": "المركبات",
@@ -174,6 +185,7 @@
     "error": "خطأ",
     "downloadTemplate": "تحميل القالب",
     "requiredColumns": "الأعمدة المطلوبة: رقم الحاوية، VIN، وصف المركبة",
+    "containerNumberPrefix": "بادئة رقم الحاوية",
     "duplicateVIN": "VIN مكرر",
     "invalidVIN": "تنسيق VIN غير صالح"
   },
@@ -222,9 +234,21 @@
     "reports": "التقارير",
     "import": "الاستيراد",
     "users": "المستخدمين",
+    "auditLogs": "سجلات التدقيق",
     "settings": "الإعدادات",
     "profile": "الملف الشخصي",
     "logout": "تسجيل الخروج"
+  },
+  "audit": {
+    "title": "سجلات التدقيق",
+    "action": "الإجراء",
+    "entityType": "نوع الكيان",
+    "entityId": "معرّف الكيان",
+    "ipAddress": "عنوان IP",
+    "timestamp": "الوقت",
+    "user": "المستخدم",
+    "noLogs": "لا توجد سجلات تدقيق",
+    "exportLogs": "تصدير السجلات"
   },
   "errors": {
     "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",

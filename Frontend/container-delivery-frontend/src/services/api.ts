@@ -225,6 +225,25 @@ export const containerService = {
     return response.data;
   },
 
+  close: async (id: number): Promise<Container> => {
+    const response = await api.post(`/containers/${id}/close`);
+    return response.data;
+  },
+
+  reopen: async (id: number): Promise<Container> => {
+    const response = await api.post(`/containers/${id}/reopen`);
+    return response.data;
+  },
+
+  getArchive: async (params?: {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+  }): Promise<PagedResponse<Container>> => {
+    const response = await api.get('/containers/archive', { params });
+    return response.data;
+  },
+
   getVehicles: async (containerId: number): Promise<PagedResponse<Container>> => {
     const response = await api.get(`/containers/${containerId}/vehicles`);
     return response.data;

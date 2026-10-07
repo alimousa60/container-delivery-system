@@ -266,6 +266,8 @@ function getPageTitle(pathname: string, t: (key: string) => string): string {
   const titles: Record<string, string> = {
     '/dashboard': t('dashboard.title'),
     '/containers': t('containers.title'),
+    '/archive': t('containers.archive'),
+    '/vehicles': t('vehicles.title'),
     '/vehicles/deliver': t('vehicles.title'),
     '/reports': t('reports.title'),
     '/import': t('import.title'),

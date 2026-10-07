@@ -15,6 +15,10 @@ const VehicleDeliveryPage = lazy(() => import('./pages/vehicles/VehicleDeliveryP
 const ReportsPage = lazy(() => import('./pages/reports/ReportsPage').then(m => ({ default: m.ReportsPage })));
 const UsersPage = lazy(() => import('./pages/users/UsersPage').then(m => ({ default: m.UsersPage })));
 const SettingsPage = lazy(() => import('./pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const ArchivePage = lazy(() => import('./pages/containers/ArchivePage').then(m => ({ default: m.ArchivePage })));
+const ImportPage = lazy(() => import('./pages/ImportPage').then(m => ({ default: m.ImportPage })));
+const AuditLogsPage = lazy(() => import('./pages/AuditLogsPage').then(m => ({ default: m.AuditLogsPage })));
+const VehiclesPage = lazy(() => import('./pages/VehiclesPage').then(m => ({ default: m.VehiclesPage })));
 
 const PageSkeleton = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -79,9 +83,17 @@ const AppRoutes = () => {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/containers" element={<ContainersPage />} />
             <Route path="/containers/:id" element={<ContainerDetailPage />} />
+            <Route path="/archive" element={<ArchivePage />} />
+            <Route path="/vehicles" element={<VehiclesPage />} />
             <Route path="/vehicles/deliver" element={<VehicleDeliveryPage />} />
+            <Route path="/import" element={<ImportPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/audit-logs" element={
+              <PrivateRoute allowedRoles={['Admin']}>
+                <AuditLogsPage />
+              </PrivateRoute>
+            } />
             <Route path="/users" element={
               <PrivateRoute allowedRoles={['Admin']}>
                 <UsersPage />
