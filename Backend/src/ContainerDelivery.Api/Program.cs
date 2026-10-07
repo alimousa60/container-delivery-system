@@ -35,6 +35,9 @@ builder.Host.UseSerilog((context, configuration) =>
 // ============================================================================
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddSingleton(
+    builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()
+    ?? throw new InvalidOperationException("JwtSettings not configured"));
 
 // ============================================================================
 // DATABASE CONTEXT
