@@ -39,6 +39,9 @@ builder.Services.AddSingleton(
     builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()
     ?? throw new InvalidOperationException("JwtSettings not configured"));
 
+// Shared in-memory token storage (refresh + password reset) across scoped services
+builder.Services.AddSingleton<TokenStore>();
+
 // ============================================================================
 // DATABASE CONTEXT
 // ============================================================================
