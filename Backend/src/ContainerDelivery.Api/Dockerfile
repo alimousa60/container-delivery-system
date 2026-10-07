@@ -24,9 +24,6 @@ RUN dotnet publish "ContainerDelivery.Api.csproj" -c Release -o /app/publish /p:
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
-# Install curl for health checks
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
 # Create non-root user
 RUN adduser --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
@@ -37,9 +34,9 @@ COPY --from=build /app/publish .
 # Expose port
 EXPOSE 8080
 
-# Health check
+# Health check (bash /dev/tcp - environment blocks apt/gpgv so curl is not installed)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:8080/health || exit 1
+  CMD bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080 && printf "GET /health HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" >&3 && read -t 5 -r line <&3 && [[ "$line" == *200* ]]'
 
 # Entry point
 ENTRYPOINT ["dotnet", "ContainerDelivery.Api.dll"]
