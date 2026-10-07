@@ -25,11 +25,15 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
 # Create non-root user
-RUN adduser --disabled-password --gecos "" appuser && chown -R appuser /app
-USER appuser
+RUN adduser --disabled-password --gecos "" appuser
 
 # Copy published output
 COPY --from=build /app/publish .
+
+# Make uploads directory writable for the runtime user
+RUN mkdir -p /app/wwwroot/uploads/logo && chown -R appuser:appuser /app
+
+USER appuser
 
 # Expose port
 EXPOSE 8080
