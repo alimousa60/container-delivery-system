@@ -106,11 +106,3 @@ public static class SeedData
         }
     }
 }
-
-// Add Role entity for seeding
-public class Role
-{
-    public int Id { get; set; }
-    public UserRole Name { get; set; }
-    public string? Description { get; set; }
-}

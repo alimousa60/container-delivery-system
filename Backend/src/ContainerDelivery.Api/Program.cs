@@ -9,7 +9,9 @@ using ContainerDelivery.Infrastructure.Email;
 using ContainerDelivery.Infrastructure.Repositories;
 using ContainerDelivery.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -77,12 +79,7 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 // ============================================================================
 // MEDIATR
 // ============================================================================
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ContainerDelivery.Application.AssemblyReference).Assembly));
-
-// ============================================================================
-// FLUENT VALIDATION
-// ============================================================================
-builder.Services.AddValidatorsFromAssembly(typeof(ContainerDelivery.Application.AssemblyReference).Assembly);
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ContainerDelivery.Application.Common.PagedRequest).Assembly));
 
 // ============================================================================
 // AUTHENTICATION - JWT BEARER
