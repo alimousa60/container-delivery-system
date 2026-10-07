@@ -415,7 +415,14 @@ public class AuthService : IAuthService
     private UserDto MapToUserDto(User user)
     {
         var roles = user.Roles.Select(r => r.ToString()).ToArray();
-        return new UserDto(user.Id, user.Email, user.FullName, roles, user.IsMfaEnabled);
+        return new UserDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FullName = user.FullName,
+            Roles = roles,
+            IsMfaEnabled = user.IsMfaEnabled
+        };
     }
 
     private void StoreRefreshToken(string refreshToken, int userId, string? deviceId)

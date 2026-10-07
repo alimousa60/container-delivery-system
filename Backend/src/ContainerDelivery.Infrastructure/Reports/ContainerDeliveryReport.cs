@@ -36,7 +36,7 @@ public class ContainerDeliveryReport : IDocument
     {
         container.Page(page =>
         {
-            page.Margin(40, 50, 40, 50);
+            page.Margin(40, 50);
             page.PageColor(Colors.White);
             page.DefaultTextStyle(x => x.FontFamily("Helvetica").FontSize(10).FontColor(Colors.Grey.Darken2));
             

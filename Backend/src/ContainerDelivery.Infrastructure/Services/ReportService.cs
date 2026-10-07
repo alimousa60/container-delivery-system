@@ -57,7 +57,7 @@ public class ReportService : IReportService
             TotalVehicles = container.TotalVehicles,
             DeliveredVehicles = container.DeliveredVehicles,
             UndeliveredVehicles = container.UndeliveredVehicles,
-            CompletionPercentage = container.CompletionPercentage,
+            CompletionPercentage = (decimal)container.CompletionPercentage,
             FileSizeBytes = pdfBytes.Length
         };
 
@@ -87,6 +87,37 @@ public class ReportService : IReportService
     {
         var spec = new ContainerReportsByContainerSpec(containerId);
         return await _unitOfWork.ContainerReports.ListAsync(spec);
+    }
+
+    public async Task<PagedResult<ContainerReport>> GetPagedAsync(int page, int pageSize)
+    {
+        var items = await _unitOfWork.ContainerReports.ListAsync(new ContainerReportsPagedSpec(page, pageSize));
+        var totalCount = await _unitOfWork.ContainerReports.CountAsync(new ContainerReportsCountSpec());
+
+        return new PagedResult<ContainerReport>(items, totalCount, page, pageSize);
+    }
+
+    public async Task<bool> DeleteAsync(int reportId, int userId)
+    {
+        var report = await _unitOfWork.ContainerReports.GetByIdAsync(reportId);
+        if (report == null)
+            return false;
+
+        await _unitOfWork.ContainerReports.DeleteAsync(report);
+
+        await _auditService.LogAsync(new AuditLog
+        {
+            UserId = userId,
+            Action = AuditAction.Delete,
+            EntityType = EntityType.Report,
+            EntityId = reportId,
+            OldValues = JsonSerializer.Serialize(new { report.FileName, report.ContainerId }),
+            NewValues = null,
+            IpAddress = null,
+            UserAgent = null
+        });
+
+        return true;
     }
 
     public async Task<Stream> DownloadAsync(int reportId)
@@ -131,25 +162,18 @@ public class ReportService : IReportService
 
     private byte[] GeneratePdf(Container container, IReadOnlyList<Vehicle> vehicles, User generatedByUser, CompanySettings? settings)
     {
-        var document = Document.Create(container =>
+        var document = Document.Create(doc =>
         {
-            container.Page(page =>
+            doc.Page(page =>
             {
                 page.Margin(50);
                 page.Header().Element(c => ComposeHeader(c, container, settings));
                 page.Content().Element(c => ComposeContent(c, container, vehicles, generatedByUser));
                 page.Footer().Element(c => ComposeFooter(c, generatedByUser, settings));
-                
-                page.Layer(LayerName.Watermark).Element(c => 
-                {
-                    c.Rotate(-45).AlignCenter().AlignMiddle()
-                        .Text("CONFIDENTIAL")
-                        .FontSize(72)
-                        .FontColor(Colors.Red.Lighten1.WithAlpha(0.1f))
-                        .Bold();
-                });
             });
         });
+
+        return document.GeneratePdf();
 
         void ComposeHeader(IContainer container, Container reportContainer, CompanySettings? settings)
         {
@@ -228,7 +252,7 @@ public class ReportService : IReportService
                 _ => (Colors.Grey.Lighten2, Colors.Grey.Darken2, "UNKNOWN", "⚪")
             };
 
-            container.Padding(5).Background(bgColor).BorderRadius(4).AlignCenter().AlignMiddle()
+            container.Padding(5).Background(bgColor).AlignCenter().AlignMiddle()
                 .DefaultTextStyle(x => x.FontColor(textColor).FontSize(9).SemiBold())
                 .Text($"{icon} {text}");
         }
@@ -237,7 +261,7 @@ public class ReportService : IReportService
         {
             container.PaddingVertical(20).Column(col =>
             {
-                col.Item().Element(c => ComposeSummaryCards(c, reportContainer));
+                col.Item().Element(c => ComposeSummaryCards(c));
                 col.Item().PaddingTop(20).Element(c => ComposeProgressBar(c, reportContainer));
                 col.Item().PaddingTop(20).Element(c => ComposeContainerDetails(c, reportContainer));
                 col.Item().PaddingTop(20).Element(c => ComposeVehiclesTable(c, vehicles));
@@ -273,7 +297,7 @@ public class ReportService : IReportService
 
             void ComposeStatCard(IContainer container, string label, string value, string bgColor, string textColor, string icon)
             {
-                container.Background(bgColor).BorderRadius(8).Padding(20).Column(col =>
+                container.Background(bgColor).Padding(20).Column(col =>
                 {
                     col.Item().Row(r =>
                     {
@@ -296,16 +320,16 @@ public class ReportService : IReportService
                         r.RelativeItem().Text("Delivery Progress").SemiBold().FontSize(12).FontColor(Colors.Grey.Darken1);
                         r.AutoItem().Text($"{reportContainer.CompletionPercentage:F1}%").FontSize(14).Bold().FontColor(Colors.Blue.Darken2);
                     });
-                    col.Item().PaddingTop(8).Height(12).Background(Colors.Grey.Lighten2).BorderRadius(6).OverflowHidden().Element(c =>
+                    col.Item().PaddingTop(8).Height(12).Background(Colors.Grey.Lighten2).OverflowHidden().Element(c =>
                     {
-                        c.WidthPercent(reportContainer.CompletionPercentage).Background(Colors.Blue.Medium).BorderRadius(6);
+                        c.Width((float)reportContainer.CompletionPercentage, Unit.Percentage).Background(Colors.Blue.Medium);
                     });
                 });
             }
 
             void ComposeContainerDetails(IContainer container, Container reportContainer)
             {
-                container.Background(Colors.Grey.Lighten4).BorderRadius(8).Padding(20).Column(col =>
+                container.Background(Colors.Grey.Lighten4).Padding(20).Column(col =>
                 {
                     col.Item().Text("Container Details").FontSize(14).Bold().FontColor(Colors.Blue.Darken2);
                     col.Item().PaddingTop(10).Row(row =>
@@ -329,7 +353,7 @@ public class ReportService : IReportService
                     });
                 });
 
-                void AddDetailRow(IContainer c, string label, string value)
+                void AddDetailRow(ColumnDescriptor c, string label, string value)
                 {
                     c.Item().Row(r =>
                     {
@@ -341,7 +365,7 @@ public class ReportService : IReportService
 
             void ComposeNotes(IContainer container, Container reportContainer)
             {
-                container.Background(Colors.Yellow.Lighten3).BorderRadius(8).Padding(15).Column(col =>
+                container.Background(Colors.Yellow.Lighten3).Padding(15).Column(col =>
                 {
                     col.Item().Row(r =>
                     {
@@ -369,8 +393,8 @@ public class ReportService : IReportService
                     table.ColumnsDefinition(columns =>
                     {
                         columns.ConstantColumn(45);
-                        columns.RelativeColumn(2.5);
-                        columns.RelativeColumn(3.5);
+                        columns.RelativeColumn(2.5f);
+                        columns.RelativeColumn(3.5f);
                         columns.ConstantColumn(110);
                         columns.RelativeColumn(2);
                         columns.RelativeColumn(2);
@@ -394,18 +418,18 @@ public class ReportService : IReportService
                         var statusTextColor = isDelivered ? Colors.Green.Darken2 : Colors.Red.Darken2;
                         var statusText = isDelivered ? "✅ Delivered" : "❌ Pending";
 
-                        table.Cell().Element(c => DataCellStyle(c, bgColor)).Text(index.ToString()).FontSize(9).AlignCenter();
+                        table.Cell().Element(c => DataCellStyle(c, bgColor).AlignCenter()).Text(index.ToString()).FontSize(9);
                         table.Cell().Element(c => DataCellStyle(c, bgColor)).Text(vehicle.Vin).FontSize(9).FontFamily("Monospace");
                         table.Cell().Element(c => DataCellStyle(c, bgColor)).Text(vehicle.Description).FontSize(9);
-                        table.Cell().Element(c => DataCellStyle(c, bgColor)).Padding(5).Background(statusBg).BorderRadius(4).AlignCenter().Text(statusText).FontSize(8).FontColor(statusTextColor).SemiBold();
-                        table.Cell().Element(c => DataCellStyle(c, bgColor)).Text(vehicle.DeliveredAt?.ToString("yyyy-MM-dd HH:mm") ?? "—").FontSize(9).FontColor(Colors.Grey.Medium).AlignCenter();
-                        table.Cell().Element(c => DataCellStyle(c, bgColor)).Text(vehicle.DeliveredByUser?.FullName ?? "—").FontSize(9).FontColor(Colors.Grey.Medium).AlignCenter();
+                        table.Cell().Element(c => DataCellStyle(c, bgColor).Padding(5).Background(statusBg).AlignCenter()).Text(statusText).FontSize(8).FontColor(statusTextColor).SemiBold();
+                        table.Cell().Element(c => DataCellStyle(c, bgColor).AlignCenter()).Text(vehicle.DeliveredAt?.ToString("yyyy-MM-dd HH:mm") ?? "—").FontSize(9).FontColor(Colors.Grey.Medium);
+                        table.Cell().Element(c => DataCellStyle(c, bgColor).AlignCenter()).Text(vehicle.DeliveredByUser?.FullName ?? "—").FontSize(9).FontColor(Colors.Grey.Medium);
 
                         index++;
                     }
 
-                    static IContainer HeaderCellStyle(IContainer c) => c.Padding(8).Background(Colors.Blue.Darken2).FontColor(Colors.White).FontSize(9);
-                    static IContainer DataCellStyle(IContainer c, string bgColor) => c.Padding(8).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Background(bgColor).FontSize(9);
+                    static IContainer HeaderCellStyle(IContainer c) => c.Padding(8).Background(Colors.Blue.Darken2).DefaultTextStyle(x => x.FontColor(Colors.White).FontSize(9));
+                    static IContainer DataCellStyle(IContainer c, string bgColor) => c.Padding(8).BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Background(bgColor).DefaultTextStyle(x => x.FontSize(9));
                 });
             }
 
@@ -418,22 +442,22 @@ public class ReportService : IReportService
                         row.RelativeItem().Column(c =>
                         {
                             c.Item().Height(60).BorderBottom(1).BorderColor(Colors.Grey.Medium);
-                            c.Item().PaddingTop(5).Text("Authorized Signature").FontSize(10).FontColor(Colors.Grey.Medium).AlignCenter();
-                            c.Item().Text("Date: _______________").FontSize(10).FontColor(Colors.Grey.Medium).AlignCenter();
+                            c.Item().PaddingTop(5).AlignCenter().Text("Authorized Signature").FontSize(10).FontColor(Colors.Grey.Medium);
+                            c.Item().AlignCenter().Text("Date: _______________").FontSize(10).FontColor(Colors.Grey.Medium);
                         });
                         row.ConstantItem(50);
                         row.RelativeItem().Column(c =>
                         {
                             c.Item().Height(60).BorderBottom(1).BorderColor(Colors.Grey.Medium);
-                            c.Item().PaddingTop(5).Text("Receiver Signature").FontSize(10).FontColor(Colors.Grey.Medium).AlignCenter();
-                            c.Item().Text("Date: _______________").FontSize(10).FontColor(Colors.Grey.Medium).AlignCenter();
+                            c.Item().PaddingTop(5).AlignCenter().Text("Receiver Signature").FontSize(10).FontColor(Colors.Grey.Medium);
+                            c.Item().AlignCenter().Text("Date: _______________").FontSize(10).FontColor(Colors.Grey.Medium);
                         });
                     });
                 });
             }
         }
 
-        void ComposeFooter(IContainer container, User generatedByUser)
+        void ComposeFooter(IContainer container, User generatedByUser, CompanySettings? settings)
         {
             var footerText = settings?.ReportFooter ?? "This document is confidential and intended solely for the use of the individual or entity to whom it is addressed.";
             

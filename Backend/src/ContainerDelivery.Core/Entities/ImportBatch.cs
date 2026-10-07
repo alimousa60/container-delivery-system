@@ -29,11 +29,25 @@ public class ImportBatch : BaseEntity
     [Required]
     public int ImportedByUserId { get; set; }
 
+    public DateTime ImportedAt { get; set; } = DateTime.UtcNow;
+
     public DateTime? CompletedAt { get; set; }
 
     // Navigation property
     [ForeignKey(nameof(ImportedByUserId))]
     public virtual User ImportedByUser { get; set; } = null!;
+
+    public ImportBatch()
+    {
+    }
+
+    public ImportBatch(string fileName, string filePath, int importedByUserId)
+    {
+        FileName = fileName;
+        FilePath = filePath;
+        ImportedByUserId = importedByUserId;
+        ImportedAt = DateTime.UtcNow;
+    }
 
     public void StartProcessing()
     {

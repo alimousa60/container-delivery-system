@@ -62,6 +62,39 @@ public class ReportsController : ControllerBase
     }
 
     /// <summary>
+    /// Get all reports (paged)
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResponse<ContainerReportDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllReports(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
+    {
+        var result = await _reportService.GetPagedAsync(page, pageSize);
+
+        var items = result.Items.Select(MapToDto).ToList();
+
+        return Ok(PagedResponse<ContainerReportDto>.Create(items, result.TotalCount, page, pageSize));
+    }
+
+    /// <summary>
+    /// Delete a report
+    /// </summary>
+    [HttpDelete("{reportId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteReport(int reportId)
+    {
+        var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+
+        var deleted = await _reportService.DeleteAsync(reportId, userId);
+        if (!deleted)
+            return NotFound();
+
+        return NoContent();
+    }
+
+    /// <summary>
     /// Generate reports for multiple containers (Admin only)
     /// </summary>
     [HttpPost("bulk")]

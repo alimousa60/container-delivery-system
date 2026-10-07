@@ -13,11 +13,13 @@ namespace ContainerDelivery.Api.Controllers;
 public class ContainersController : ControllerBase
 {
     private readonly IContainerService _containerService;
+    private readonly IImportService _importService;
     private readonly ILogger<ContainersController> _logger;
 
-    public ContainersController(IContainerService containerService, ILogger<ContainersController> logger)
+    public ContainersController(IContainerService containerService, IImportService importService, ILogger<ContainersController> logger)
     {
         _containerService = containerService;
+        _importService = importService;
         _logger = logger;
     }
 
@@ -210,6 +212,17 @@ public class ContainersController : ControllerBase
         using var stream = file.OpenReadStream();
         var result = await _containerService.ImportAsync(stream, file.FileName, userId, containerNumberPrefix);
         
+        return Ok(result);
+    }
+
+    [HttpGet("import")]
+    [Authorize(Policy = "AdminOnly")]
+    [ProducesResponseType(typeof(PagedResponse<ImportBatch>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetImports(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
+    {
+        var result = await _importService.GetPagedAsync(page, pageSize);
         return Ok(result);
     }
 

@@ -56,10 +56,52 @@ public class Container : BaseEntity
         : 0;
 
     [NotMapped]
-    public bool CanBeDeleted => Status == ContainerStatus.FullyDelivered;
+    public bool CanBeDeleted => Status == ContainerStatus.FullyDelivered || Status == ContainerStatus.Closed;
 
     [NotMapped]
     public bool HasPendingDeliveries => DeliveredVehicles < TotalVehicles;
+
+    [NotMapped]
+    public bool CanBeClosed => Status == ContainerStatus.FullyDelivered && Reports.Count > 0;
+
+    [NotMapped]
+    public bool CanBeReopened => Status == ContainerStatus.Closed;
+
+    public Container()
+    {
+    }
+
+    public Container(string containerNumber, int createdByUserId, string? notes = null)
+    {
+        ContainerNumber = containerNumber;
+        CreatedByUserId = createdByUserId;
+        Notes = notes;
+    }
+
+    public void UpdateNotes(string? notes)
+    {
+        Notes = notes;
+    }
+
+    public void StartDelivery()
+    {
+        Status = ContainerStatus.InProgress;
+        StartedAt ??= DateTime.UtcNow;
+    }
+
+    public void CloseContainer(int userId)
+    {
+        Status = ContainerStatus.Closed;
+        ClosedAt = DateTime.UtcNow;
+        ClosedByUserId = userId;
+    }
+
+    public void ReopenContainer(int userId)
+    {
+        Status = ContainerStatus.FullyDelivered;
+        ClosedAt = null;
+        ClosedByUserId = null;
+    }
 
     public void RecalculateTotals()
     {

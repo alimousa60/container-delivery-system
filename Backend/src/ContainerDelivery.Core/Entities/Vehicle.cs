@@ -32,6 +32,17 @@ public class Vehicle : BaseEntity
 
     public virtual ICollection<DeliveryRecord> DeliveryRecords { get; set; } = new List<DeliveryRecord>();
 
+    public Vehicle()
+    {
+    }
+
+    public Vehicle(string vin, string description, int containerId)
+    {
+        Vin = vin;
+        Description = description;
+        ContainerId = containerId;
+    }
+
     public void MarkAsDelivered(int userId, DeliveryMethod method = DeliveryMethod.Manual, string? notes = null, string? scannedVin = null)
     {
         if (IsDelivered)

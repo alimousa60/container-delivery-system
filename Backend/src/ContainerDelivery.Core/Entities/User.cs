@@ -64,6 +64,11 @@ public class User : BaseEntity
         LockedOutUntil = null;
     }
 
+    public void ChangePassword(string passwordHash)
+    {
+        PasswordHash = passwordHash;
+    }
+
     public void RecordFailedLogin()
     {
         FailedLoginAttempts++;

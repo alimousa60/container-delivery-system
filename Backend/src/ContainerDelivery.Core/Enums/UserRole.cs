@@ -29,7 +29,9 @@ public enum AuditAction
     Import = 5,
     Export = 6,
     Delivery = 7,
-    ReportGeneration = 8
+    ReportGeneration = 8,
+    MfaSetup = 9,
+    MfaDisable = 10
 }
 
 public enum EntityType

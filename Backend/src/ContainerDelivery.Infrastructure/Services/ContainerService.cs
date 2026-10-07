@@ -1,5 +1,7 @@
 using ContainerDelivery.Core.Entities;
 using ContainerDelivery.Core.Enums;
+using InvalidOperationException = ContainerDelivery.Core.Exceptions.InvalidOperationException;
+using ContainerDelivery.Core.Enums;
 using ContainerDelivery.Core.Exceptions;
 using ContainerDelivery.Core.Interfaces;
 using ContainerDelivery.Core.Specifications;
@@ -177,7 +179,7 @@ public class ContainerService : IContainerService
             throw new EntityNotFoundException("Container", containerId);
 
         if (!container.CanBeClosed)
-            throw new InvalidOperationException("Container can only be closed when fully delivered and a report has been generated", "CANNOT_CLOSE_CONTAINER", new { container.Status, container.Reports.Count() });
+            throw new InvalidOperationException("Container can only be closed when fully delivered and a report has been generated", "CANNOT_CLOSE_CONTAINER", new { container.Status, ReportsCount = container.Reports.Count });
 
         var oldStatus = container.Status;
         container.CloseContainer(userId);

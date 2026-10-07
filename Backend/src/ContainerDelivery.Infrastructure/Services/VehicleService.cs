@@ -5,6 +5,7 @@ using ContainerDelivery.Core.Enums;
 using ContainerDelivery.Core.Exceptions;
 using ContainerDelivery.Core.Interfaces;
 using ContainerDelivery.Core.Specifications;
+using InvalidOperationException = ContainerDelivery.Core.Exceptions.InvalidOperationException;
 
 namespace ContainerDelivery.Infrastructure.Services;
 

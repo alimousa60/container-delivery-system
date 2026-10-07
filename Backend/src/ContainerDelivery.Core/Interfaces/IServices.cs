@@ -147,6 +147,8 @@ public class ImportResultDto
     public int DuplicateVins { get; set; }
     public int ContainersCreated { get; set; }
     public int VehiclesImported { get; set; }
+    public int SuccessfulRecords { get; set; }
+    public int FailedRecords { get; set; }
     public List<ImportErrorDto> Errors { get; set; } = [];
     public TimeSpan ProcessingTime { get; set; }
 }
@@ -175,6 +177,8 @@ public interface IReportService
     Task<ContainerReport> GenerateAsync(int containerId, int generatedByUserId);
     Task<ContainerReport> GetByIdAsync(int id);
     Task<IReadOnlyList<ContainerReport>> GetByContainerIdAsync(int containerId);
+    Task<PagedResult<ContainerReport>> GetPagedAsync(int page, int pageSize);
+    Task<bool> DeleteAsync(int reportId, int userId);
     Task<Stream> DownloadAsync(int reportId);
     Task<BulkReportResult> GenerateBulkAsync(IEnumerable<int> containerIds, int generatedByUserId);
 }

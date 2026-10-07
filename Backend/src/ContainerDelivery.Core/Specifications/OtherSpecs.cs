@@ -124,6 +124,26 @@ public class ContainerReportByIdSpec : BaseSpecification<ContainerReport>
     }
 }
 
+public class ContainerReportsPagedSpec : BaseSpecification<ContainerReport>
+{
+    public ContainerReportsPagedSpec(int page, int pageSize)
+    {
+        Criteria = r => true;
+        ApplyOrderByDescending(r => r.GeneratedAt);
+        ApplyPaging((page - 1) * pageSize, pageSize);
+        AddInclude(r => r.Container);
+        AddInclude(r => r.GeneratedByUser);
+    }
+}
+
+public class ContainerReportsCountSpec : BaseSpecification<ContainerReport>
+{
+    public ContainerReportsCountSpec()
+    {
+        Criteria = r => true;
+    }
+}
+
 public class ImportBatchesPagedSpec : BaseSpecification<ImportBatch>
 {
     public ImportBatchesPagedSpec(int page, int pageSize)

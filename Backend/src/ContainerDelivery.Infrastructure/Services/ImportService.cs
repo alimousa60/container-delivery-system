@@ -158,6 +158,9 @@ public class ImportService : IImportService
                 }
             }
 
+            result.SuccessfulRecords = result.VehiclesImported;
+            result.FailedRecords = result.InvalidRows + result.DuplicateVins;
+
             var errorJson = System.Text.Json.JsonSerializer.Serialize(errors);
             importBatch.Complete(result.SuccessfulRecords, result.FailedRecords, errorJson);
             await _unitOfWork.ImportBatches.UpdateAsync(importBatch);
