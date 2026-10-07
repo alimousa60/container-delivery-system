@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using ContainerDelivery.Core.Entities;
 using ContainerDelivery.Core.Enums;
+using ContainerDelivery.Core.Interfaces;
 using UserRole = ContainerDelivery.Core.Enums.UserRole;
 
 namespace ContainerDelivery.Infrastructure.Auth;
@@ -90,12 +91,4 @@ public class JwtTokenService : IJwtTokenService
         var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier) ?? principal.FindFirst(JwtRegisteredClaimNames.Sub);
         return int.TryParse(userIdClaim?.Value, out var userId) ? userId : null;
     }
-}
-
-public interface IJwtTokenService
-{
-    string GenerateAccessToken(User user, IEnumerable<UserRole> roles);
-    string GenerateRefreshToken();
-    ClaimsPrincipal? ValidateToken(string token);
-    int? GetUserIdFromToken(string token);
 }

@@ -319,28 +319,6 @@ public class SimpleContainerReport : IDocument
 }
 
 // Simple data classes for standalone usage
-public class ContainerData
-{
-    public string ContainerNumber { get; set; } = "";
-    public int TotalVehicles { get; set; }
-    public int DeliveredVehicles { get; set; }
-    public ContainerStatus Status { get; set; }
-    public double CompletionPercentage { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime? StartedAt { get; set; }
-    public DateTime? CompletedAt { get; set; }
-    public int UndeliveredVehicles => TotalVehicles - DeliveredVehicles;
-}
-
-public class VehicleData
-{
-    public string Vin { get; set; } = "";
-    public string Description { get; set; } = "";
-    public bool IsDelivered { get; set; }
-    public DateTime? DeliveredAt { get; set; }
-    public string? DeliveredBy { get; set; }
-}
-
 // Usage Example:
 /*
 var report = new SimpleContainerReport(

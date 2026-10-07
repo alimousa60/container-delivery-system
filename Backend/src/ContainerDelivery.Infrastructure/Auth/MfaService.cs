@@ -1,6 +1,7 @@
 using OtpNet;
 using System.Security.Cryptography;
 using ContainerDelivery.Core.Entities;
+using ContainerDelivery.Core.Interfaces;
 
 namespace ContainerDelivery.Infrastructure.Auth;
 
@@ -58,14 +59,3 @@ public class MfaService : IMfaService
         return recoveryCodes.Where(c => !c.Equals(usedCode, StringComparison.OrdinalIgnoreCase)).ToArray();
     }
 }
-
-public interface IMfaService
-{
-    MfaSetupResult GenerateSecret(string userEmail);
-    bool VerifyCode(string base32Secret, string code, TimeSpan? tolerance = null);
-    string[] GenerateRecoveryCodes(int count = 10);
-    bool VerifyRecoveryCode(string[] recoveryCodes, string code);
-    string[] RemoveUsedRecoveryCode(string[] recoveryCodes, string usedCode);
-}
-
-public record MfaSetupResult(string Secret, string QrCodeUrl, string[] RecoveryCodes);

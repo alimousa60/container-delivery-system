@@ -187,7 +187,7 @@ export const UsersPage: React.FC = () => {
                 }
               },
               danger: true,
-            }),
+            })),
             { divider: true },
             ...roleOptions.filter(r => !user.roles.includes(r.value)).map(role => ({
               label: `Add ${role.label}`,

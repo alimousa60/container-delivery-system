@@ -27,10 +27,3 @@ public class PasswordService : IPasswordService
         return BCrypt.Net.BCrypt.PasswordNeedsRehash(hash, 12);
     }
 }
-
-public interface IPasswordService
-{
-    string HashPassword(string password);
-    bool VerifyPassword(string password, string hash);
-    bool NeedsRehash(string hash);
-}

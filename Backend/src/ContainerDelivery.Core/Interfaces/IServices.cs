@@ -138,35 +138,36 @@ public interface IImportService
     Task<PagedResult<ImportBatch>> GetPagedAsync(int page, int pageSize);
 }
 
-public record ImportResultDto(
-    int ImportBatchId,
-    int TotalRows,
-    int ValidRows,
-    int InvalidRows,
-    int DuplicateVins,
-    int ContainersCreated,
-    int VehiclesImported,
-    List<ImportErrorDto> Errors,
-    TimeSpan ProcessingTime
-);
+public class ImportResultDto
+{
+    public int ImportBatchId { get; set; }
+    public int TotalRows { get; set; }
+    public int ValidRows { get; set; }
+    public int InvalidRows { get; set; }
+    public int DuplicateVins { get; set; }
+    public int ContainersCreated { get; set; }
+    public int VehiclesImported { get; set; }
+    public List<ImportErrorDto> Errors { get; set; } = [];
+    public TimeSpan ProcessingTime { get; set; }
+}
 
 public record ImportBatchStatusDto(
-    int Id,
-    string FileName,
-    ImportStatus Status,
-    int TotalRecords,
-    int SuccessfulRecords,
-    int FailedRecords,
-    DateTime ImportedAt,
-    DateTime? CompletedAt,
-    List<ImportErrorDto> Errors
+    int Id = 0,
+    string FileName = "",
+    ImportStatus Status = default,
+    int TotalRecords = 0,
+    int SuccessfulRecords = 0,
+    int FailedRecords = 0,
+    DateTime ImportedAt = default,
+    DateTime? CompletedAt = null,
+    List<ImportErrorDto>? Errors = null
 );
 
 public record ImportErrorDto(
-    int Row,
-    string Field,
-    string Value,
-    string Error
+    int Row = 0,
+    string Field = "",
+    string Value = "",
+    string Error = ""
 );
 
 public interface IReportService
