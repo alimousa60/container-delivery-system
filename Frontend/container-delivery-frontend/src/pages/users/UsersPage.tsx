@@ -15,7 +15,7 @@ import { useToast } from '@/components/ui/Toast';
 import { 
   Plus, 
   Search, 
-  User, 
+  User as UserIcon, 
   Edit, 
   Trash2, 
   Shield, 
@@ -109,7 +109,7 @@ export const UsersPage: React.FC = () => {
       render: (user) => (
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-            <User className="w-4 h-4 text-primary-600" />
+            <UserIcon className="w-4 h-4 text-primary-600" />
           </div>
           <div>
             <p className="font-medium text-gray-900 dark:text-white">{user.fullName}</p>

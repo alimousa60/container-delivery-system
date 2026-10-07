@@ -13,7 +13,8 @@ import {
   AlertCircle, 
   Clock, 
   AlertTriangle,
-  TrendingUp
+  TrendingUp,
+  FileText
 } from 'lucide-react';
 import { clsx } from 'clsx';
 

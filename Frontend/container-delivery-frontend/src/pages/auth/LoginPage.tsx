@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useForm } from 'react-hook_form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
@@ -43,7 +43,7 @@ export const LoginPage: React.FC = () => {
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     try {
-      await login(data);
+      await login({ email: data.email!, password: data.password! });
     } catch (err) {
       if (err instanceof Error && err.message === 'MFA_REQUIRED') {
         setShowMfa(true);

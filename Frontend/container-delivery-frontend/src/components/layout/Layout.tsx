@@ -205,11 +205,7 @@ export const Layout: React.FC = () => {
                     {resolvedTheme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
                   </button>
                 }
-                items={themeOptions.map(opt => ({
-                  label: opt.label,
-                  icon: <opt.icon className="w-4 h-4" />,
-                  onClick: () => setTheme(opt.value as 'light' | 'dark' | 'system'),
-                }))}
+                items={themeOptions}
                 align="right"
               />
 

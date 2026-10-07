@@ -122,7 +122,7 @@ public class ReportsController : ControllerBase
             ContainerId = report.ContainerId,
             ContainerNumber = report.Container?.ContainerNumber ?? string.Empty,
             FileName = report.FileName,
-            GeneratedAt = report.GeneratedAt,
+            GeneratedAt = report.CreatedAt,
             GeneratedBy = report.GeneratedByUser?.FullName ?? "Unknown",
             TotalVehicles = report.TotalVehicles,
             DeliveredVehicles = report.DeliveredVehicles,

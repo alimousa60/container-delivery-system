@@ -129,7 +129,7 @@ public class ContainerReportsPagedSpec : BaseSpecification<ContainerReport>
     public ContainerReportsPagedSpec(int page, int pageSize)
     {
         Criteria = r => true;
-        ApplyOrderByDescending(r => r.GeneratedAt);
+        ApplyOrderByDescending(r => r.CreatedAt);
         ApplyPaging((page - 1) * pageSize, pageSize);
         AddInclude(r => r.Container);
         AddInclude(r => r.GeneratedByUser);

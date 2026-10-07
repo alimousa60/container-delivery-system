@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import { LoadingSpinner, TableLoading } from '@/components/ui/LoadingSpinner';
 import { useToast } from '@/components/ui/Toast';
-import { Upload, FileText, RefreshCw, AlertCircle, CheckCircle, Download } from 'lucide-react';
+import { Upload, FileText, RefreshCw, AlertCircle, CheckCircle, Download, X } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const ImportPage: React.FC = () => {

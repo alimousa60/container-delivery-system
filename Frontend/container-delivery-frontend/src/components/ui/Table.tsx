@@ -1,6 +1,6 @@
 import React from 'react';
 import { clsx } from 'clsx';
-import { ChevronUp, ChevronDown, ChevronUpDown } from 'lucide-react';
+import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 
 export interface TableColumn<T> {
   key: string;
@@ -47,7 +47,7 @@ export function Table<T>({
   };
 
   const getSortIcon = (key: string) => {
-    if (sortBy !== key) return <ChevronUpDown className="w-4 h-4 text-gray-400" />;
+    if (sortBy !== key) return <ChevronsUpDown className="w-4 h-4 text-gray-400" />;
     return sortOrder === 'asc' ? <ChevronUp className="w-4 h-4 text-primary-600" /> : <ChevronDown className="w-4 h-4 text-primary-600" />;
   };
 

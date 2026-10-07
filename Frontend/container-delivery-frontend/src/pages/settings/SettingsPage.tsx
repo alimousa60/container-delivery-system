@@ -48,8 +48,6 @@ export const SettingsPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
 
-  const { updateUser } = useAuth();
-  const { success: showSuccess, error: showError } = useToast();
   const { updateSettings, uploadLogo } = useSettings();
 
   useEffect(() => {
@@ -70,7 +68,7 @@ export const SettingsPage: React.FC = () => {
     }
   }, [settings]);
 
-  const profileMutation = React.useMutation({
+  const profileMutation = useMutation({
     mutationFn: async (data: typeof profileData) => {
       await new Promise(resolve => setTimeout(resolve, 500));
       return data;
@@ -84,7 +82,7 @@ export const SettingsPage: React.FC = () => {
     onSettled: () => setIsSaving(false),
   });
 
-  const passwordMutation = React.useMutation({
+  const passwordMutation = useMutation({
     mutationFn: async (data: typeof passwordData) => {
       await new Promise(resolve => setTimeout(resolve, 500));
       return data;
@@ -101,7 +99,7 @@ export const SettingsPage: React.FC = () => {
     onSettled: () => setIsSaving(false),
   });
 
-  const companyMutation = React.useMutation({
+  const companyMutation = useMutation({
     mutationFn: async (data: typeof companyData) => {
       await updateSettings(data);
       return data;
@@ -115,7 +113,7 @@ export const SettingsPage: React.FC = () => {
     onSettled: () => setIsSaving(false),
   });
 
-  const logoUploadMutation = React.useMutation({
+  const logoUploadMutation = useMutation({
     mutationFn: async (file: File) => {
       return await uploadLogo(file);
     },

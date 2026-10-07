@@ -6,6 +6,7 @@ import { containerService, vehicleService } from '@/services/api';
 import { Container, Vehicle, DeliveryMethod } from '@/types';
 import { Table, TableColumn } from '@/components/ui/Table';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { Dropdown, DropdownItem } from '@/components/ui/Dropdown';
 import { StatusBadge } from '@/components/ui/Badge';

@@ -14,7 +14,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('app_language') as Language) || i18n.language || 'en';
+      const saved = localStorage.getItem('app_language');
+      if (saved === 'ar' || saved === 'en') return saved;
     }
     return 'en';
   });

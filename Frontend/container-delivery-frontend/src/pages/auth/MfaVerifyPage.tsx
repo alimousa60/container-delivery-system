@@ -138,7 +138,7 @@ export const MfaVerifyPage: React.FC = () => {
                       if (value && value.match(/^\d$/)) {
                         setValue(`code`, Array.from({ length: 6 }, (_, i) => 
                           i === index ? value : 
-                          document.querySelector(`input[data-index="${i}"]`)?.value || ''
+                          ((document.querySelector(`input[data-index="${i}"]`) as HTMLInputElement | null)?.value || '')
                         ).join(''));
                       }
                     }}

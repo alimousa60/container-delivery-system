@@ -3,8 +3,8 @@ import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
 
 export interface DropdownItem {
-  label: string;
-  onClick: () => void;
+  label?: string;
+  onClick?: () => void;
   icon?: React.ReactNode;
   disabled?: boolean;
   danger?: boolean;

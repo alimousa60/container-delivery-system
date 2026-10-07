@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { auditService } from '@/services/api';
 import { AuditLog, AuditAction, EntityType, PagedResponse } from '@/types';
 import { Table, TableColumn } from '@/components/ui/Table';

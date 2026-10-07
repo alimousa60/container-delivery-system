@@ -6,15 +6,15 @@ import { Layout } from './components/layout/Layout';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
 import { Toaster } from './components/ui/Toaster';
 
-const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
-const MfaVerifyPage = lazy(() => import('./pages/auth/MfaVerifyPage'));
-const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage'));
-const ContainersPage = lazy(() => import('./pages/containers/ContainersPage'));
-const ContainerDetailPage = lazy(() => import('./pages/containers/ContainerDetailPage'));
+const LoginPage = lazy(() => import('./pages/auth/LoginPage').then(m => ({ default: m.LoginPage })));
+const MfaVerifyPage = lazy(() => import('./pages/auth/MfaVerifyPage').then(m => ({ default: m.MfaVerifyPage })));
+const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const ContainersPage = lazy(() => import('./pages/containers/ContainersPage').then(m => ({ default: m.ContainersPage })));
+const ContainerDetailPage = lazy(() => import('./pages/containers/ContainerDetailPage').then(m => ({ default: m.ContainerDetailPage })));
 const VehicleDeliveryPage = lazy(() => import('./pages/vehicles/VehicleDeliveryPage'));
-const ReportsPage = lazy(() => import('./pages/reports/ReportsPage'));
-const UsersPage = lazy(() => import('./pages/users/UsersPage'));
-const SettingsPage = lazy(() => import('./pages/settings/SettingsPage'));
+const ReportsPage = lazy(() => import('./pages/reports/ReportsPage').then(m => ({ default: m.ReportsPage })));
+const UsersPage = lazy(() => import('./pages/users/UsersPage').then(m => ({ default: m.UsersPage })));
+const SettingsPage = lazy(() => import('./pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
 
 const PageSkeleton = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">

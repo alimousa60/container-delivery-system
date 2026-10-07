@@ -134,6 +134,8 @@ export interface ImportResultDto {
   duplicateVins: number;
   containersCreated: number;
   vehiclesImported: number;
+  successfulRecords: number;
+  failedRecords: number;
   errors: ImportErrorDto[];
   processingTime: string;
 }

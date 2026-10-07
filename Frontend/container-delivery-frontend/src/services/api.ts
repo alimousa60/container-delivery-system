@@ -418,6 +418,21 @@ export const settingsService = {
     });
     return response.data;
   },
+
+  getCompanyName: async (): Promise<string> => {
+    const response = await api.get('/settings/company-name');
+    return response.data;
+  },
+
+  getLogoUrl: async (): Promise<string | null> => {
+    const response = await api.get('/settings/logo');
+    return response.data;
+  },
+
+  getReportFooter: async (): Promise<string> => {
+    const response = await api.get('/settings/report-footer');
+    return response.data;
+  },
 };
 
 export default api;

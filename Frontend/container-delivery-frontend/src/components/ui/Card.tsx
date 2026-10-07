@@ -1,15 +1,16 @@
 import React from 'react';
 
-interface CardProps {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
-  onClick?: () => void;
+  hover?: boolean;
 }
 
-export const Card: React.FC<CardProps> = ({ children, className = '', onClick }) => (
+export const Card: React.FC<CardProps> = ({ children, className = '', hover, onClick, ...rest }) => (
   <div
-    className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm ${className}`}
+    className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm ${hover ? 'hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-shadow' : ''} ${className}`}
     onClick={onClick}
+    {...rest}
   >
     {children}
   </div>
