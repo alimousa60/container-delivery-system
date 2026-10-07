@@ -30,6 +30,8 @@ public class AuditLog : BaseEntity
     [MaxLength(500)]
     public string? UserAgent { get; set; }
 
+    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+
     // Navigation property
     [ForeignKey(nameof(UserId))]
     public virtual User? User { get; set; }

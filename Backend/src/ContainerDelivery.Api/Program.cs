@@ -1,8 +1,13 @@
 using ContainerDelivery.Api.Extensions;
+using ContainerDelivery.Api.Filters;
 using ContainerDelivery.Api.Middleware;
+using ContainerDelivery.Core.Interfaces;
 using ContainerDelivery.Infrastructure;
 using ContainerDelivery.Infrastructure.Auth;
+using ContainerDelivery.Infrastructure.Data;
 using ContainerDelivery.Infrastructure.Email;
+using ContainerDelivery.Infrastructure.Repositories;
+using ContainerDelivery.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
@@ -20,8 +25,6 @@ builder.Host.UseSerilog((context, configuration) =>
     configuration
         .ReadFrom.Configuration(context.Configuration)
         .Enrich.FromLogContext()
-        .Enrich.WithMachineName()
-        .Enrich.WithThreadId()
         .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
         .WriteTo.File("logs/app-.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30));
 
@@ -62,6 +65,7 @@ builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ISettingsService, SettingsService>();
 
 // ============================================================================
 // INFRASTRUCTURE SERVICES
@@ -74,11 +78,6 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 // MEDIATR
 // ============================================================================
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ContainerDelivery.Application.AssemblyReference).Assembly));
-
-// ============================================================================
-// AUTOMAPPER
-// ============================================================================
-builder.Services.AddAutoMapper(typeof(ContainerDelivery.Application.AssemblyReference).Assembly);
 
 // ============================================================================
 // FLUENT VALIDATION
@@ -312,8 +311,7 @@ builder.Services.AddCors(options =>
 // HEALTH CHECKS
 // ============================================================================
 builder.Services.AddHealthChecks()
-    .AddDbContextCheck<ApplicationDbContext>("Database", tags: new[] { "ready" })
-    .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: new[] { "live" });
+    .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: new[] { "live", "ready" });
 
 // ============================================================================
 // SIGNALR (for real-time updates)

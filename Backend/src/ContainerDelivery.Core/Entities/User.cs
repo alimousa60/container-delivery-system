@@ -6,6 +6,17 @@ namespace ContainerDelivery.Core.Entities;
 
 public class User : BaseEntity
 {
+    public User()
+    {
+    }
+
+    public User(string email, string passwordHash, string fullName)
+    {
+        Email = email;
+        PasswordHash = passwordHash;
+        FullName = fullName;
+    }
+
     [Required]
     [MaxLength(256)]
     [EmailAddress]
@@ -67,6 +78,20 @@ public class User : BaseEntity
     public void ChangePassword(string passwordHash)
     {
         PasswordHash = passwordHash;
+    }
+
+    public void EnableMfa(string secret, string recoveryCodes)
+    {
+        MfaSecret = secret;
+        MfaRecoveryCodes = recoveryCodes;
+        IsMfaEnabled = true;
+    }
+
+    public void DisableMfa()
+    {
+        MfaSecret = null;
+        MfaRecoveryCodes = null;
+        IsMfaEnabled = false;
     }
 
     public void RecordFailedLogin()

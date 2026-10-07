@@ -16,6 +16,7 @@ const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
   rememberMe: z.boolean().optional(),
+  mfaCode: z.string().optional(),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;

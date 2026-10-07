@@ -320,9 +320,13 @@ public class ReportService : IReportService
                         r.RelativeItem().Text("Delivery Progress").SemiBold().FontSize(12).FontColor(Colors.Grey.Darken1);
                         r.AutoItem().Text($"{reportContainer.CompletionPercentage:F1}%").FontSize(14).Bold().FontColor(Colors.Blue.Darken2);
                     });
-                    col.Item().PaddingTop(8).Height(12).Background(Colors.Grey.Lighten2).OverflowHidden().Element(c =>
+                    var pct = Math.Clamp((float)reportContainer.CompletionPercentage, 0f, 100f);
+                    col.Item().PaddingTop(8).Height(12).Background(Colors.Grey.Lighten2).Row(r =>
                     {
-                        c.Width((float)reportContainer.CompletionPercentage, Unit.Percentage).Background(Colors.Blue.Medium);
+                        if (pct > 0)
+                            r.RelativeItem(pct).Height(12).Background(Colors.Blue.Medium);
+                        if (pct < 100)
+                            r.RelativeItem(100f - pct).Height(12);
                     });
                 });
             }

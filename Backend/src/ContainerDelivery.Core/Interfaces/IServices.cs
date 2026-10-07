@@ -7,7 +7,7 @@ namespace ContainerDelivery.Core.Interfaces;
 
 public interface IAuthService
 {
-    Task<AuthResult> LoginAsync(string email, string password, string ipAddress, string userAgent);
+    Task<AuthResult> LoginAsync(string email, string password, string ipAddress, string userAgent, bool rememberDevice = false);
     Task<AuthResult> RefreshTokenAsync(string refreshToken, string ipAddress, string userAgent);
     Task LogoutAsync(string refreshToken);
     Task<MfaSetupResult> SetupMfaAsync(int userId);

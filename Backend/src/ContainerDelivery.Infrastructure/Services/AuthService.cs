@@ -42,7 +42,7 @@ public class AuthService : IAuthService
         _logger = logger;
     }
 
-    public async Task<AuthResult> LoginAsync(string email, string password, string ipAddress, string userAgent)
+    public async Task<AuthResult> LoginAsync(string email, string password, string ipAddress, string userAgent, bool rememberDevice = false)
     {
         var spec = new UserByEmailSpec(email);
         var user = await _unitOfWork.Users.FirstOrDefaultAsync(spec);
@@ -108,17 +108,17 @@ public class AuthService : IAuthService
                 UserAgent = userAgent
             });
 
-            return new AuthResult(false, RequiresMfa: true, User: MapToUserDto(user));
+            return new AuthResult(false, RequiresMfa: true, User: user);
         }
 
         user.RecordSuccessfulLogin();
         await _unitOfWork.Users.UpdateAsync(user);
 
         var roles = await _unitOfWork.UserRoles.ListAsync(new UserRolesByUserSpec(user.Id));
-        var accessToken = _jwtTokenService.GenerateAccessToken(user, roles);
+        var accessToken = _jwtTokenService.GenerateAccessToken(user, roles.Select(r => r.Role).ToList());
         var refreshToken = _jwtTokenService.GenerateRefreshToken();
 
-        StoreRefreshToken(refreshToken, user.Id, null);
+        StoreRefreshToken(refreshToken, user.Id, rememberDevice ? Guid.NewGuid().ToString() : null);
 
         await _auditService.LogAsync(new AuditLog
         {
@@ -137,7 +137,7 @@ public class AuthService : IAuthService
             accessToken,
             refreshToken,
             15 * 60,
-            MapToUserDto(user)
+            user
         );
     }
 
@@ -162,7 +162,7 @@ public class AuthService : IAuthService
         }
 
         var roles = await _unitOfWork.UserRoles.ListAsync(new UserRolesByUserSpec(user.Id));
-        var newAccessToken = _jwtTokenService.GenerateAccessToken(user, roles);
+        var newAccessToken = _jwtTokenService.GenerateAccessToken(user, roles.Select(r => r.Role).ToList());
         var newRefreshToken = _jwtTokenService.GenerateRefreshToken();
 
         _refreshTokens.Remove(refreshToken);
@@ -173,7 +173,7 @@ public class AuthService : IAuthService
             newAccessToken,
             newRefreshToken,
             15 * 60,
-            MapToUserDto(user)
+            user
         );
     }
 
@@ -252,7 +252,7 @@ public class AuthService : IAuthService
         await _unitOfWork.Users.UpdateAsync(user);
 
         var roles = await _unitOfWork.UserRoles.ListAsync(new UserRolesByUserSpec(user.Id));
-        var accessToken = _jwtTokenService.GenerateAccessToken(user, roles);
+        var accessToken = _jwtTokenService.GenerateAccessToken(user, roles.Select(r => r.Role).ToList());
         var refreshToken = _jwtTokenService.GenerateRefreshToken();
 
         var deviceId = rememberDevice ? Guid.NewGuid().ToString() : null;
@@ -275,7 +275,7 @@ public class AuthService : IAuthService
             accessToken,
             refreshToken,
             15 * 60,
-            MapToUserDto(user)
+            user
         );
     }
 

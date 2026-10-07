@@ -58,15 +58,6 @@ public class AuthResponse
     public string? Error { get; init; }
 }
 
-public record UserDto
-{
-    public int Id { get; init; }
-    public string Email { get; init; } = string.Empty;
-    public string FullName { get; init; } = string.Empty;
-    public string[] Roles { get; init; } = [];
-    public bool IsMfaEnabled { get; init; }
-}
-
 public record MfaSetupResponse
 {
     public string Secret { get; init; } = string.Empty;

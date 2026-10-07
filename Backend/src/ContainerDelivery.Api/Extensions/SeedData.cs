@@ -1,5 +1,6 @@
 using ContainerDelivery.Core.Entities;
 using ContainerDelivery.Core.Enums;
+using ContainerDelivery.Core.Interfaces;
 using ContainerDelivery.Infrastructure.Auth;
 using ContainerDelivery.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

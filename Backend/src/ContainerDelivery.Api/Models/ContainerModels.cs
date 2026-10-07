@@ -14,6 +14,8 @@ public record ContainerDto
     public DateTime CreatedAt { get; init; }
     public DateTime? StartedAt { get; init; }
     public DateTime? CompletedAt { get; init; }
+    public DateTime? ClosedAt { get; init; }
+    public string? ClosedBy { get; init; }
 }
 
 public record ContainerDetailDto : ContainerDto

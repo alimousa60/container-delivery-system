@@ -1,4 +1,5 @@
-﻿using ContainerDelivery.Api.Models;
+using ContainerDelivery.Api.Models;
+using ContainerDelivery.Core.Entities;
 using ContainerDelivery.Core.Enums;
 using ContainerDelivery.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;

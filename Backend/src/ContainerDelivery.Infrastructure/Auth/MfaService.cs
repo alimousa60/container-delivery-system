@@ -26,7 +26,8 @@ public class MfaService : IMfaService
         {
             var key = Base32Encoding.ToBytes(base32Secret);
             var totp = new Totp(key, step: 30, totpSize: 6);
-            return totp.VerifyTotp(code, out _, tolerance ?? TimeSpan.FromSeconds(30));
+            var steps = tolerance.HasValue ? Math.Max(1, (int)(tolerance.Value.TotalSeconds / 30)) : 1;
+            return totp.VerifyTotp(code, out _, new VerificationWindow(steps, steps));
         }
         catch
         {

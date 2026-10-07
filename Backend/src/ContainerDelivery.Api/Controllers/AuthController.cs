@@ -52,7 +52,7 @@ public class AuthController : ControllerBase
                 Id = result.User.Id,
                 Email = result.User.Email,
                 FullName = result.User.FullName,
-                Roles = result.User.Roles,
+                Roles = result.User.Roles.Select(r => r.ToString()).ToArray(),
                 IsMfaEnabled = result.User.IsMfaEnabled
             } : null,
             Error = result.Error
@@ -90,7 +90,7 @@ public class AuthController : ControllerBase
                 Id = result.User.Id,
                 Email = result.User.Email,
                 FullName = result.User.FullName,
-                Roles = result.User.Roles,
+                Roles = result.User.Roles.Select(r => r.ToString()).ToArray(),
                 IsMfaEnabled = result.User.IsMfaEnabled
             } : null
         };

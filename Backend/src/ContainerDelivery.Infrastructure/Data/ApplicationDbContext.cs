@@ -12,6 +12,7 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
+    public DbSet<Role> Roles => Set<Role>();
     public DbSet<Container> Containers => Set<Container>();
     public DbSet<Vehicle> Vehicles => Set<Vehicle>();
     public DbSet<DeliveryRecord> DeliveryRecords => Set<DeliveryRecord>();

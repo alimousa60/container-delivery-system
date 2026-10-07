@@ -37,11 +37,6 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
         builder.Property(r => r.Name).IsRequired().HasMaxLength(50);
         builder.HasIndex(r => r.Name).IsUnique();
         builder.Property(r => r.Description).HasMaxLength(500);
-
-        builder.HasMany(r => r.UserRoles)
-            .WithOne(ur => ur.Role)
-            .HasForeignKey(ur => ur.RoleId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 
@@ -50,18 +45,13 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
     public void Configure(EntityTypeBuilder<UserRole> builder)
     {
         builder.ToTable("UserRoles");
-        builder.HasKey(ur => new { ur.UserId, ur.RoleId });
-        builder.Property(ur => ur.AssignedAt).IsRequired().HasDefaultValueSql("SYSUTCDATETIME()");
-        builder.Property(ur => ur.AssignedByUserId).IsRequired();
+        builder.HasKey(ur => ur.Id);
+        builder.Property(ur => ur.Role).HasConversion<string>().HasMaxLength(50);
+        builder.HasIndex(ur => new { ur.UserId, ur.Role }).IsUnique();
 
         builder.HasOne(ur => ur.User)
             .WithMany(u => u.UserRoles)
             .HasForeignKey(ur => ur.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne(ur => ur.Role)
-            .WithMany(r => r.UserRoles)
-            .HasForeignKey(ur => ur.RoleId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(ur => ur.AssignedByUser)
