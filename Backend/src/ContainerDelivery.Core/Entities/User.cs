@@ -52,6 +52,7 @@ public class User : BaseEntity
     // Navigation properties
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     public virtual ICollection<Container> CreatedContainers { get; set; } = new List<Container>();
+    public virtual ICollection<Container> ClosedContainers { get; set; } = new List<Container>();
     public virtual ICollection<Vehicle> DeliveredVehicles { get; set; } = new List<Vehicle>();
     public virtual ICollection<DeliveryRecord> DeliveryRecords { get; set; } = new List<DeliveryRecord>();
     public virtual ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
