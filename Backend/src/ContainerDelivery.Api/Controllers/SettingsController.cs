@@ -13,11 +13,13 @@ public class SettingsController : ControllerBase
 {
     private readonly ISettingsService _settingsService;
     private readonly ILogger<SettingsController> _logger;
+    private readonly IWebHostEnvironment _env;
 
-    public SettingsController(ISettingsService settingsService, ILogger<SettingsController> logger)
+    public SettingsController(ISettingsService settingsService, ILogger<SettingsController> logger, IWebHostEnvironment env)
     {
         _settingsService = settingsService;
         _logger = logger;
+        _env = env;
     }
 
     /// <summary>
@@ -83,9 +85,25 @@ public class SettingsController : ControllerBase
         if (!allowedTypes.Contains(file.ContentType))
             return BadRequest(new { error = "Invalid file type. Allowed: JPEG, PNG, SVG, WebP" });
 
-        // In a real implementation, upload to blob storage and get URL
-        // For now, we'll simulate with a placeholder URL
-        var logoUrl = $"/uploads/logo/{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".svg", ".webp" };
+        var extension = Path.GetExtension(file.FileName ?? string.Empty).ToLowerInvariant();
+        if (!allowedExtensions.Contains(extension))
+            return BadRequest(new { error = "Invalid file extension. Allowed: JPG, PNG, SVG, WebP" });
+
+        var webRoot = string.IsNullOrEmpty(_env.WebRootPath)
+            ? Path.Combine(_env.ContentRootPath, "wwwroot")
+            : _env.WebRootPath;
+        var uploadDirectory = Path.Combine(webRoot, "uploads", "logo");
+        Directory.CreateDirectory(uploadDirectory);
+
+        var fileName = $"{Guid.NewGuid():N}{extension}";
+        var filePath = Path.Combine(uploadDirectory, fileName);
+        await using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var logoUrl = $"/uploads/logo/{fileName}";
 
         var settings = await _settingsService.GetAsync();
         if (settings == null)

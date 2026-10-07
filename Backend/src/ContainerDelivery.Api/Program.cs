@@ -378,6 +378,9 @@ app.Use(async (context, next) =>
 app.UseHttpsRedirection();
 app.UseCors("DefaultPolicy");
 
+// Serve static files (uploaded logos under wwwroot/uploads)
+app.UseStaticFiles();
+
 app.UseSerilogRequestLogging(options =>
 {
     options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";

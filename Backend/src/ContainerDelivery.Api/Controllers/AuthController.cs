@@ -52,8 +52,12 @@ public class AuthController : ControllerBase
                 Id = result.User.Id,
                 Email = result.User.Email,
                 FullName = result.User.FullName,
+                PhoneNumber = result.User.PhoneNumber,
+                IsActive = result.User.IsActive,
                 Roles = result.User.Roles.Select(r => r.ToString()).ToArray(),
-                IsMfaEnabled = result.User.IsMfaEnabled
+                IsMfaEnabled = result.User.IsMfaEnabled,
+                CreatedAt = result.User.CreatedAt,
+                LastLoginAt = result.User.LastLoginAt
             } : null,
             Error = result.Error
         };
@@ -90,8 +94,12 @@ public class AuthController : ControllerBase
                 Id = result.User.Id,
                 Email = result.User.Email,
                 FullName = result.User.FullName,
+                PhoneNumber = result.User.PhoneNumber,
+                IsActive = result.User.IsActive,
                 Roles = result.User.Roles.Select(r => r.ToString()).ToArray(),
-                IsMfaEnabled = result.User.IsMfaEnabled
+                IsMfaEnabled = result.User.IsMfaEnabled,
+                CreatedAt = result.User.CreatedAt,
+                LastLoginAt = result.User.LastLoginAt
             } : null
         };
 

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useSettings } from '@/hooks/useSettings';
+import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/Button';
 import { Dropdown, DropdownItem } from '@/components/ui/Dropdown';
 import { 
@@ -45,6 +46,7 @@ export const Layout: React.FC = () => {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const { theme, resolvedTheme, setTheme, toggleTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
   const { settings } = useSettings();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -212,13 +214,13 @@ export const Layout: React.FC = () => {
               {/* Language toggle */}
               <Dropdown
                 trigger={
-                  <button className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" aria-label="Language">
+                  <button className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" aria-label={t('settings.language')}>
                     <Globe className="w-5 h-5" />
                   </button>
                 }
                 items={[
-                  { label: t('settings.english'), onClick: () => document.documentElement.lang = 'en' },
-                  { label: t('settings.arabic'), onClick: () => document.documentElement.lang = 'ar' },
+                  { label: t('settings.english'), onClick: () => setLanguage('en') },
+                  { label: t('settings.arabic'), onClick: () => setLanguage('ar') },
                 ]}
                 align="right"
               />

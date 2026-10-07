@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
+import { userService, authService } from '@/services/api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -17,10 +19,33 @@ const passwordSchema = {
   confirmPassword: '',
 };
 
+const getApiErrorMessage = (err: unknown): string => {
+  const e = err as {
+    response?: {
+      data?: {
+        error?: string;
+        message?: string;
+        detail?: string;
+        title?: string;
+        errors?: Record<string, string[]>;
+      };
+    };
+    message?: string;
+  };
+  const data = e?.response?.data;
+  if (data?.error) return data.error;
+  if (data?.message) return data.message;
+  if (data?.errors) return Object.values(data.errors).flat().join(' ');
+  if (data?.detail) return data.detail;
+  if (data?.title) return data.title;
+  return e?.message || 'Something went wrong';
+};
+
 export const SettingsPage: React.FC = () => {
   const { t } = useTranslation();
   const { user, updateUser } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
   const { settings, isLoading: settingsLoading, refetch: refetchSettings } = useSettings();
   const { success: showSuccess, error: showError } = useToast();
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'appearance' | 'notifications' | 'company'>('profile');
@@ -47,6 +72,13 @@ export const SettingsPage: React.FC = () => {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
+  const [notifPrefs, setNotifPrefs] = useState<Record<string, boolean>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('notification_prefs') || '{}');
+    } catch {
+      return {};
+    }
+  });
 
   const { updateSettings, uploadLogo } = useSettings();
 
@@ -70,22 +102,25 @@ export const SettingsPage: React.FC = () => {
 
   const profileMutation = useMutation({
     mutationFn: async (data: typeof profileData) => {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return data;
+      if (!user) throw new Error('Not authenticated');
+      return userService.update(user.id, {
+        fullName: data.fullName,
+        phoneNumber: data.phoneNumber || undefined,
+        isActive: user.isActive ?? true,
+      });
     },
-    onSuccess: (data) => {
-      updateUser(data);
-      setProfileData(data);
+    onSuccess: (updated) => {
+      updateUser({ fullName: updated.fullName, phoneNumber: updated.phoneNumber ?? undefined });
+      setProfileData({ fullName: updated.fullName, phoneNumber: updated.phoneNumber || '' });
       showSuccess(t('settings.updateSuccess'));
     },
-    onError: (err: Error) => showError(err.message),
+    onError: (err: Error) => showError(getApiErrorMessage(err)),
     onSettled: () => setIsSaving(false),
   });
 
   const passwordMutation = useMutation({
     mutationFn: async (data: typeof passwordData) => {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return data;
+      await authService.changePassword(data.currentPassword, data.newPassword);
     },
     onSuccess: () => {
       setPasswordData({
@@ -95,7 +130,7 @@ export const SettingsPage: React.FC = () => {
       });
       showSuccess(t('auth.passwordChanged'));
     },
-    onError: (err: Error) => showError(err.message),
+    onError: (err: Error) => showError(getApiErrorMessage(err)),
     onSettled: () => setIsSaving(false),
   });
 
@@ -109,7 +144,7 @@ export const SettingsPage: React.FC = () => {
       refetchSettings();
       showSuccess(t('settings.updateSuccess'));
     },
-    onError: (err: Error) => showError(err.message),
+    onError: (err: Error) => showError(getApiErrorMessage(err)),
     onSettled: () => setIsSaving(false),
   });
 
@@ -123,7 +158,7 @@ export const SettingsPage: React.FC = () => {
       refetchSettings();
       showSuccess(t('settings.logoUploaded'));
     },
-    onError: (err: Error) => showError(err.message),
+    onError: (err: Error) => showError(getApiErrorMessage(err)),
     onSettled: () => setLogoUploading(false),
   });
 
@@ -136,11 +171,11 @@ export const SettingsPage: React.FC = () => {
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showError('Passwords do not match');
+      showError(t('settings.passwordsNoMatch'));
       return;
     }
     if (passwordData.newPassword.length < 8) {
-      showError('Password must be at least 8 characters');
+      showError(t('settings.passwordTooShort'));
       return;
     }
     setIsSaving(true);
@@ -179,6 +214,14 @@ export const SettingsPage: React.FC = () => {
     showSuccess(`${t('settings.theme')} updated`);
   };
 
+  const toggleNotifPref = (id: string) => {
+    setNotifPrefs(prev => {
+      const next = { ...prev, [id]: !(prev[id] ?? true) };
+      localStorage.setItem('notification_prefs', JSON.stringify(next));
+      return next;
+    });
+  };
+
   const tabs = [
     { id: 'profile', label: t('settings.profile'), icon: User },
     { id: 'security', label: t('settings.security'), icon: Shield },
@@ -194,7 +237,7 @@ export const SettingsPage: React.FC = () => {
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('settings.title')}</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your account settings and preferences</p>
+        <p className="text-gray-500 dark:text-gray-400 mt-1">{t('settings.subtitle')}</p>
       </div>
 
       <Card>
@@ -271,7 +314,7 @@ export const SettingsPage: React.FC = () => {
                   onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
                   required
                   autoComplete="new-password"
-                  helperText="At least 8 characters"
+                  helperText={t('auth.passwordHint')}
                 />
                 <Input
                   label={t('auth.confirmPassword')}
@@ -293,13 +336,13 @@ export const SettingsPage: React.FC = () => {
           {activeTab === 'appearance' && (
             <div className="space-y-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('settings.theme')}</h2>
-              <p className="text-gray-500 dark:text-gray-400">Choose your preferred color theme</p>
+              <p className="text-gray-500 dark:text-gray-400">{t('settings.chooseTheme')}</p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                  { value: 'light', label: t('settings.lightMode'), icon: Sun, description: 'Always use light mode' },
-                  { value: 'dark', label: t('settings.darkMode'), icon: Moon, description: 'Always use dark mode' },
-                  { value: 'system', label: t('settings.systemDefault'), icon: Monitor, description: 'Match system setting' },
+                  { value: 'light', label: t('settings.lightMode'), icon: Sun, description: t('settings.lightModeDesc') },
+                  { value: 'dark', label: t('settings.darkMode'), icon: Moon, description: t('settings.darkModeDesc') },
+                  { value: 'system', label: t('settings.systemDefault'), icon: Monitor, description: t('settings.systemDefaultDesc') },
                 ].map((option) => {
                   const Icon = option.icon;
                   const isActive = theme === option.value;
@@ -345,10 +388,10 @@ export const SettingsPage: React.FC = () => {
                   ].map((lang) => (
                     <button
                       key={lang.code}
-                      onClick={() => document.documentElement.lang = lang.code}
+                      onClick={() => setLanguage(lang.code as 'en' | 'ar')}
                       className={clsx(
                         'flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-colors',
-                        document.documentElement.lang === lang.code
+                        language === lang.code
                           ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
                           : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                       )}
@@ -365,14 +408,14 @@ export const SettingsPage: React.FC = () => {
           {activeTab === 'notifications' && (
             <div className="space-y-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('settings.notifications')}</h2>
-              <p className="text-gray-500 dark:text-gray-400">Configure how you receive notifications</p>
+              <p className="text-gray-500 dark:text-gray-400">{t('settings.notificationsDesc')}</p>
               
               <div className="space-y-4">
                 {[
-                  { id: 'email_delivery', label: 'Delivery Confirmations', description: 'Receive email when vehicles are delivered' },
-                  { id: 'email_reports', label: 'Report Generation', description: 'Get notified when reports are ready' },
-                  { id: 'email_imports', label: 'Import Completion', description: 'Receive email when imports finish' },
-                  { id: 'push_delivery', label: 'Push Notifications', description: 'Get browser notifications for deliveries' },
+                  { id: 'email_delivery', label: t('settings.notifDelivery'), description: t('settings.notifDeliveryDesc') },
+                  { id: 'email_reports', label: t('settings.notifReports'), description: t('settings.notifReportsDesc') },
+                  { id: 'email_imports', label: t('settings.notifImports'), description: t('settings.notifImportsDesc') },
+                  { id: 'push_delivery', label: t('settings.notifPush'), description: t('settings.notifPushDesc') },
                 ].map((notification) => (
                   <label key={notification.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                     <div>
@@ -382,7 +425,8 @@ export const SettingsPage: React.FC = () => {
                     <input
                       type="checkbox"
                       className="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                      defaultChecked
+                      checked={notifPrefs[notification.id] ?? true}
+                      onChange={() => toggleNotifPref(notification.id)}
                     />
                   </label>
                 ))}

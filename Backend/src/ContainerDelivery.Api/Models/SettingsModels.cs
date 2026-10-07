@@ -26,7 +26,6 @@ public record UpdateSettingsRequest
     public string CompanyName { get; init; } = string.Empty;
 
     [StringLength(500, ErrorMessage = "Logo URL cannot exceed 500 characters")]
-    [Url(ErrorMessage = "Invalid URL format")]
     public string? LogoUrl { get; init; }
 
     [StringLength(500, ErrorMessage = "Address cannot exceed 500 characters")]
