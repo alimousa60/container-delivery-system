@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # SQL Server Database
   sqlserver:
@@ -19,7 +17,8 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - container-delivery-network
+      container-delivery-network:
+        ipv4_address: 172.28.0.10
 
   # Redis Cache
   redis:
@@ -36,7 +35,8 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - container-delivery-network
+      container-delivery-network:
+        ipv4_address: 172.28.0.11
 
   # Backend API
   api:
@@ -63,6 +63,10 @@ services:
       - EmailSettings__FromName=Container Delivery System
       - AllowedOrigins__0=http://localhost:3000
       - AllowedOrigins__1=http://localhost:5173
+    extra_hosts:
+      - "sqlserver:172.28.0.10"
+      - "redis:172.28.0.11"
+      - "mailhog:172.28.0.14"
     ports:
       - "5001:8080"
     depends_on:
@@ -71,7 +75,8 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - container-delivery-network
+      container-delivery-network:
+        ipv4_address: 172.28.0.12
     volumes:
       - ./Backend:/src:ro
 
@@ -85,8 +90,11 @@ services:
       - "3000:80"
     depends_on:
       - api
+    extra_hosts:
+      - "api:172.28.0.12"
     networks:
-      - container-delivery-network
+      container-delivery-network:
+        ipv4_address: 172.28.0.13
 
   # Mailhog for email testing
   mailhog:
@@ -96,7 +104,8 @@ services:
       - "1025:1025"  # SMTP
       - "8025:8025"  # Web UI
     networks:
-      - container-delivery-network
+      container-delivery-network:
+        ipv4_address: 172.28.0.14
 
   # Azurite for local blob storage
   azurite:
@@ -109,7 +118,8 @@ services:
     volumes:
       - azurite_data:/data
     networks:
-      - container-delivery-network
+      container-delivery-network:
+        ipv4_address: 172.28.0.15
 
 volumes:
   sqlserver_data:
@@ -119,3 +129,6 @@ volumes:
 networks:
   container-delivery-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
